@@ -10,3 +10,8 @@
 5. (moveTo) The pawn choice is moved according to the die roll.
 6. (checkCollisions) IF the pawn is occupying the same space as another, remove it from the field. ELSE do nothing.
 7. Player turn ends.
+
+Alternative Flows:
+[EndField]
+After step 4, move pawn into win field.
+Resume at step 7.
