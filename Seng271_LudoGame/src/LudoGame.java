@@ -49,11 +49,11 @@ public class LudoGame extends JPanel {
 	 */
 	public LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		final ImageIcon boardBackground = createImageIcon("src\\game_board.png");
-		final ImageIcon bluePawnImg = createImageIcon("src\\blue_pawn.png");
-		final ImageIcon redPawnImg = createImageIcon("src\\red_pawn.png");
-		final ImageIcon greenPawnImg = createImageIcon("src\\green_pawn.png");
-		final ImageIcon yellowPawnImg = createImageIcon("src\\yellow_pawn.png");
+		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
+		final ImageIcon bluePawnImg = createImageIcon("src/blue_pawn.png");
+		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
+		final ImageIcon greenPawnImg = createImageIcon("src/green_pawn.png");
+		final ImageIcon yellowPawnImg = createImageIcon("src/yellow_pawn.png");
 
 		setupTheGrid();
 
