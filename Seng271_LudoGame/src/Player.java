@@ -6,10 +6,18 @@ public class Player {
 	private Strategy strategy;
 	private GoalField goalField;
 	private HomeField homeField;
-	private Pawn[] pawns;
+	private Pawn[] pawns; // Should be a set of 4.
 	
-	/*
+	/**
 	 * 
+	 * @param strategy
+	 * 			The strategy used by the player.
+	 * @param goalField
+	 * 			The player's goal field. This should be determined by the game itself.
+	 * @param homeField
+	 * 			The player's home field. This should be determined by the game itself.
+	 * @param pawns
+	 * 			The set of the players pawns. These should be created by the Ludo game initialization.
 	 */
 	public Player(Strategy strategy, GoalField goalField, HomeField homeField, Pawn[] pawns){
 		this.strategy = strategy;
@@ -19,14 +27,14 @@ public class Player {
 		this.pawns = pawns;
 	}
 	
-	/*
+	/**
 	 * 
 	 */
 	public void planMove(){
 		
 	}
 	
-	/*
+	/**
 	 * 
 	 */
 	public void doMove() {
