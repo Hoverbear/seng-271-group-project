@@ -6,12 +6,29 @@ public class Player {
 	private Strategy strategy;
 	private GoalField goalField;
 	private HomeField homeField;
-	private Pawn[] Pawns;
+	private Pawn[] pawns;
 	
+	/*
+	 * 
+	 */
+	public Player(Strategy strategy, GoalField goalField, HomeField homeField, Pawn[] pawns){
+		this.strategy = strategy;
+		this.goalField = goalField;
+		this.homeField = homeField;
+		// TODO: Verify correctness.
+		this.pawns = pawns;
+	}
+	
+	/*
+	 * 
+	 */
 	public void planMove(){
 		
 	}
 	
+	/*
+	 * 
+	 */
 	public void doMove() {
 		
 	}
