@@ -71,6 +71,11 @@ public class LudoGame extends JPanel {
 		addPawns(yellowPawnImg, yellowPawns, RIGHT, TOP);
 		addPawns(greenPawnImg, greenPawns, RIGHT, BOTTOM);
 		add(boardPane);
+		
+		// Get an instance of the singleton Die.
+		new Die();
+		Die die = Die.getInstance();
+		// TODO: Add graphics for Die.
 	}
 
 	/**
