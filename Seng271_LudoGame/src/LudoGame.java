@@ -6,7 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 /**
  * This is the main runner class for the Ludo Game. It currently prints the
@@ -34,26 +40,48 @@ public class LudoGame extends JPanel {
 	// The grid offsets for putting pawns in the correct home field
 	private final static int LEFT = 1, RIGHT = 8;
 	private final static int TOP = 1, BOTTOM = 8;
-	
+
 	// The array lists to keep track of the pawns in the game
-	private final ArrayList<Pawn> bluePawns = new ArrayList<Pawn>();
 	private final ArrayList<Pawn> redPawns = new ArrayList<Pawn>();
-	private final ArrayList<Pawn> greenPawns = new ArrayList<Pawn>();
+	private final ArrayList<Pawn> bluePawns = new ArrayList<Pawn>();
 	private final ArrayList<Pawn> yellowPawns = new ArrayList<Pawn>();
+	private final ArrayList<Pawn> greenPawns = new ArrayList<Pawn>();
 
 	// The swing panel for layered objects
-	private JLayeredPane boardPane;
+	private final JLayeredPane boardPane;
+
+	private final Die theDie;
+
+	// private final HomeField redHome;
+	// private final HomeField blueHome;
+	// private final HomeField greenHome;
+	// private final HomeField yellowHome;
+
+	private final ArrayList<GoalField> redGoal = new ArrayList<GoalField>();
+	private final ArrayList<GoalField> blueGoal = new ArrayList<GoalField>();
+	private final ArrayList<GoalField> yellowGoal = new ArrayList<GoalField>();
+	private final ArrayList<GoalField> greenGoal = new ArrayList<GoalField>();
+
+	// private final Strategy redStrategy;
+	// private final Strategy blueStrategy;
+	// private final Strategy greenStrategy;
+	// private final Strategy yellowStrategy;
+	//
+	// private final Player redPlayer;
+	// private final Player bluePlayer;
+	// private final Player yellowPlayer;
+	// private final Player greenPlayer;
 
 	/**
 	 * Constructor for the game board. Adds layered images and game pieces.
 	 */
-	public LudoGame() {
+	private LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
-		final ImageIcon bluePawnImg = createImageIcon("src/blue_pawn.png");
 		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
-		final ImageIcon greenPawnImg = createImageIcon("src/green_pawn.png");
+		final ImageIcon bluePawnImg = createImageIcon("src/blue_pawn.png");
 		final ImageIcon yellowPawnImg = createImageIcon("src/yellow_pawn.png");
+		final ImageIcon greenPawnImg = createImageIcon("src/green_pawn.png");
 
 		setupTheGrid();
 
@@ -66,16 +94,36 @@ public class LudoGame extends JPanel {
 		board.setBounds(BOARDLEFTOFFSET, BOARDTOPOFFSET, boardSize.width,
 				boardSize.height);
 
-		addPawns(bluePawnImg, bluePawns, LEFT, TOP);
 		addPawns(redPawnImg, redPawns, LEFT, BOTTOM);
+		addPawns(bluePawnImg, bluePawns, LEFT, TOP);
 		addPawns(yellowPawnImg, yellowPawns, RIGHT, TOP);
 		addPawns(greenPawnImg, greenPawns, RIGHT, BOTTOM);
-		add(boardPane);
-		
+
+		// redHome = new HomeField();
+		// blueHome = new HomeField();
+		// greenHome = new HomeField();
+		// yellowHome = new HomeField();
+
 		// Get an instance of the singleton Die.
-		new Die();
-		Die die = Die.getInstance();
+		theDie = Die.getInstance();
 		// TODO: Add graphics for Die.
+
+		// Finally, boardPane is added to the game frame.
+		add(boardPane);
+		// And the game is started!
+		startTheGame();
+	}
+
+	/**
+	 * Start of a test method. Anything that should happen after board setup
+	 * goes here.
+	 */
+	private void startTheGame() {
+		int playerRoll = 0;
+		while (playerRoll != 6) {
+			playerRoll = theDie.roll();
+			System.out.println("Roll: " + playerRoll);
+		}
 	}
 
 	/**
@@ -88,8 +136,62 @@ public class LudoGame extends JPanel {
 		for (int i = 0; i < GRIDNUM; i++) {
 			for (int j = 0; j < GRIDNUM; j++) {
 				THEGRID[i][j] = new Point(i * GRIDSIZE, j * GRIDSIZE);
+				System.out.println(THEGRID[i][j]);
 			}
 		}
+	}
+
+	private void setupTheFields() {
+
+		final int[] gridI = { 10, 10, 9, 8, 7, 6, 6, 6, 6, 6, 5, 4, 4, 4, 4, 4,
+				3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7,
+				8, 9, 10 };
+		final int[] gridJ = { 5, 4, 4, 4, 4, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4,
+				4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 9, 10, 10, 10, 9, 8, 7, 6,
+				6, 6, 6, 6 };
+		Field lastField = null;
+		BasicField firstField = null;
+		for (int i = 0; i < 40; i++) {
+			BasicField theTrack = new BasicField(THEGRID[gridI[i]][gridJ[i]]);
+			if (i % 10 == 0) {
+				if (i == 0) {
+					firstField = theTrack;
+					int[] goalI = { 9, 8, 7, 6 };
+					int[] goalJ = { 5, 5, 5, 5 };
+					setupTheGoals(redGoal, goalI, goalJ, theTrack);
+				} else if (i == 10) {
+					int[] goalI = { 5, 5, 5, 5 };
+					int[] goalJ = { 1, 2, 3, 4 };
+					setupTheGoals(blueGoal, goalI, goalJ, theTrack);
+				} else if (i == 20) {
+					int[] goalI = { 1, 2, 3, 4 };
+					int[] goalJ = { 5, 5, 5, 5 };
+					setupTheGoals(yellowGoal, goalI, goalJ, theTrack);
+				} else if (i == 30) {
+					int[] goalI = { 9, 8, 7, 6 };
+					int[] goalJ = { 5, 5, 5, 5 };
+					setupTheGoals(greenGoal, goalI, goalJ, theTrack);
+				}
+			} else if ((i - 1) % 10 == 0) {
+				if (i == 1) {
+
+				} else if (i == 11) {
+
+				} else if (i == 21) {
+
+				} else if (i == 31) {
+
+				}
+			}
+			if (lastField != null) {
+				lastField.setNextField(theTrack);
+			}
+		}
+	}
+
+	private void setupTheGoals(final ArrayList<GoalField> theGoal,
+			final int[] gridI, final int[] gridJ, final BasicField linker) {
+
 	}
 
 	/**
@@ -113,15 +215,14 @@ public class LudoGame extends JPanel {
 				JLabel jl = new JLabel(imgSrc);
 				boardPane.add(jl, new Integer(1));
 				Dimension size = jl.getPreferredSize();
-				jl.setBounds(
-						BOARDLEFTOFFSET
-								+ (THEGRID[i % 2 + homeFieldX][j % 2
-										+ homeFieldY].x), BOARDTOPOFFSET
+				jl.setBounds(BOARDLEFTOFFSET
+						+ (THEGRID[i % 2 + homeFieldX][j % 2 + homeFieldY].x),
+						BOARDTOPOFFSET
 								+ THEGRID[i % 2 + homeFieldX][j % 2
 										+ homeFieldY].y, size.width,
 						size.height);
 				Pawn p = new Pawn(jl, jl.getLocation());
-				bluePawns.add(p);
+				pawnList.add(p);
 			}
 		}
 	}
