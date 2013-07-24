@@ -10,6 +10,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -252,7 +253,13 @@ public class LudoGame extends JPanel {
 		JFrame frame = new JFrame("Ludo Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JComponent contentPane = new LudoGame();
+		// Prompt for players
+		Object[] possibilities = {1,2,3,4};
+		int result = (int) JOptionPane.showInputDialog(frame, "Please choose the number of players who may be playing this game.",
+				"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null, possibilities, possibilities[0]);
+		System.out.println(result);
+		
+		JComponent contentPane = new LudoGame(); // TODO: Pass in number of humans!
 		contentPane.setOpaque(true);
 		frame.setContentPane(contentPane);
 
