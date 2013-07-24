@@ -5,5 +5,7 @@
 *.war
 *.ear
 bin/
+*.metadata
+*.db
 
 .DS_Store
