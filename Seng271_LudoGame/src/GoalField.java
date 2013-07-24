@@ -6,7 +6,7 @@ public class GoalField extends Field {
 		super(point);
 	}
 
-	public final void setNextField(final GoalField goalField) {
+	public final void setNextGoalField(final GoalField goalField) {
 		setNextField(goalField);
 	}
 }
