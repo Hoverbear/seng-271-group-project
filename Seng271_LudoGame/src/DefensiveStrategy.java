@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /** 
  *
  */
@@ -7,7 +9,7 @@ public class DefensiveStrategy implements Strategy {
 	 * @see Strategy#doMove()
 	 */
 	@Override
-	public Pawn doMove() {
+	public ArrayList<Pawn> doMove(ArrayList<Pawn> Pawns, Die die) {
 		// TODO Auto-generated method stub
 		return null;
 	}
