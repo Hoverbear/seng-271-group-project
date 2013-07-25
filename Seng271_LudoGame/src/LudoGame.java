@@ -74,7 +74,7 @@ public class LudoGame extends JPanel {
 	/**
 	 * Constructor for the game board. Adds layered images and game pieces.
 	 */
-	private LudoGame() {
+	private LudoGame(int numberOfHumans) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
 		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
@@ -94,11 +94,8 @@ public class LudoGame extends JPanel {
 				boardSize.height);
 
 		setupTheFields();
-
-		// redHome.addPawns(redPawns);
-		// blueHome.addPawns(bluePawns);
-		// yellowHome.addPawns(yellowPawns);
-		// greenHome.addPawns(greenPawns);
+		
+		setupThePlayers(numberOfHumans);
 
 		addPawns(redPawnImg, redPawns, redHome);
 		addPawns(bluePawnImg, bluePawns, blueHome);
@@ -111,6 +108,62 @@ public class LudoGame extends JPanel {
 
 		// Finally, boardPane is added to the game frame.
 		add(boardPane);
+	}
+
+	private Player[] setupThePlayers(int numberOfHumans) {
+		// TODO: Make these arrays globally exposed?
+		
+		// We'll initialize the players later.
+		Player redPlayer = null;
+		Player bluePlayer = null;
+		Player yellowPlayer = null;
+		Player greenPlayer = null;
+		
+		// Set them up in array so they're bloody easy to iterate through.
+		Player[] players = { redPlayer, bluePlayer, yellowPlayer, greenPlayer };
+		
+		// Same deal with goalFields
+		// TODO: Find a way to initialize an array list with the fields so we don't have to keep adding them. It's stupid really.
+		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>();
+		goalFields.add(redGoal);
+		goalFields.add(blueGoal);
+		goalFields.add(yellowGoal);
+		goalFields.add(greenGoal);
+		
+		// Same deal with goalFields
+		// TODO: Find a way to initialize an array list with the fields so we don't have to keep adding them. It's stupid really.
+		ArrayList<ArrayList<Pawn>> pawns = new ArrayList<ArrayList<Pawn>>();
+		pawns.add(redPawns);
+		pawns.add(bluePawns);
+		pawns.add(yellowPawns);
+		pawns.add(greenPawns);
+		
+		// And homeFields
+		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome }; 
+		
+		// Loop through the four players.
+		for (int i = 0; i > 4; i++) {
+			// Do we need the next player to be a human?
+			if (numberOfHumans > 0) {
+				players[i] = new Player(new HumanStrategy(), goalFields.get(i), homeFields[i], pawns.get(i));
+			}
+			else {
+				// Choose an AI strategy.
+				int choice = (int) (1 + Math.random() * 4);
+				Strategy someStrategy;
+				switch (choice) {
+					case 1: someStrategy = new AggressiveStrategy(); break;
+					case 2: someStrategy = new DefensiveStrategy(); break;
+					case 3: someStrategy = new LonePawnStrategy(); break;
+					case 4: someStrategy = new ManyPawnsStrategy(); break;
+					default: someStrategy = new ManyPawnsStrategy(); break;
+				}
+				// Create the AI.
+				players[i] = new Player(someStrategy, goalFields.get(i), homeFields[i], pawns.get(i));
+			}
+		}
+		// All the players are initialized now.
+		return players;
 	}
 
 	/**
@@ -444,16 +497,16 @@ public class LudoGame extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Prompt for players
-		Integer[] possibilities = { 1, 2, 3, 4 };
-		int result = (int) JOptionPane
+		Integer[] possibilities = { 0, 1, 2, 3, 4 };
+		int numberOfHumans = (int) JOptionPane
 				.showInputDialog(
 						frame,
-						"Please choose the number of players who may be playing this game.",
+						"How many humans will be attempting to out-Ludo the computer?",
 						"Player Asker Abouter", JOptionPane.DEFAULT_OPTION,
 						null, possibilities, possibilities[0]);
 
 		// TODO: Pass in number of humans!
-		LudoGame contentPane = new LudoGame();
+		LudoGame contentPane = new LudoGame(numberOfHumans);
 		contentPane.setOpaque(true);
 		frame.setContentPane(contentPane);
 
