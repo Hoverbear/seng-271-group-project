@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -94,12 +93,17 @@ public class LudoGame extends JPanel {
 		board.setBounds(BOARDLEFTOFFSET, BOARDTOPOFFSET, boardSize.width,
 				boardSize.height);
 
-		addPawns(redPawnImg, redPawns, LEFT, BOTTOM);
-		addPawns(bluePawnImg, bluePawns, LEFT, TOP);
-		addPawns(yellowPawnImg, yellowPawns, RIGHT, TOP);
-		addPawns(greenPawnImg, greenPawns, RIGHT, BOTTOM);
-
 		setupTheFields();
+
+		// redHome.addPawns(redPawns);
+		// blueHome.addPawns(bluePawns);
+		// yellowHome.addPawns(yellowPawns);
+		// greenHome.addPawns(greenPawns);
+
+		addPawns(redPawnImg, redPawns, redHome);
+		addPawns(bluePawnImg, bluePawns, blueHome);
+		addPawns(yellowPawnImg, yellowPawns, yellowHome);
+		addPawns(greenPawnImg, greenPawns, greenHome);
 
 		// Get an instance of the singleton Die.
 		theDie = Die.getInstance();
@@ -107,19 +111,174 @@ public class LudoGame extends JPanel {
 
 		// Finally, boardPane is added to the game frame.
 		add(boardPane);
-		// And the game is started!
-		startTheGame();
 	}
 
 	/**
 	 * Start of a test method. Anything that should happen after board setup
 	 * goes here.
 	 */
-	private void startTheGame() {
-		int playerRoll = 0;
-		while (playerRoll != 6) {
-			playerRoll = theDie.roll();
-			System.out.println("Roll: " + playerRoll);
+	protected void startTheGame() {
+		testGame();
+	}
+
+	private void testGame() {
+		int roll = testRollDie();
+		// Checks if any pawns are out.
+		if (redHome.isFull() && roll == 6) {
+			testMovePawnFromHome(redHome);
+			roll = testRollDie();
+		}
+
+		// Checks if any pawns are out. Intentional redundancy.
+		if (!redHome.isFull()) {
+			// If there's a pawn in the goal, see if it can move.
+			if (checkIfGoalOccupied(redGoal)) {
+				// TODO
+			} else {
+				testMovePawnNormal(redPawns, redHome, redGoal.get(3), roll);
+			}
+		}
+
+		// Escape/repeat conditions.
+		// if (checkIfGoalFull(redGoal)) {
+		if (checkIfGoalOccupied(redGoal)) {
+			System.out.println("And you're done!");
+		} else {
+			System.out.println("Next round!\n");
+			sleep(1000);
+			testGame();
+		}
+	}
+
+	private int testRollDie() {
+		int playerRoll = theDie.roll();
+		System.out.println("Roll: " + playerRoll);
+		sleep(500);
+		return playerRoll;
+	}
+
+	/**
+	 * Tester method. Moves a pawn out of its homefield.
+	 * 
+	 * @param home
+	 */
+	private void testMovePawnFromHome(final HomeField home) {
+		Pawn p = home.getPawn();
+		p.moveToField(home.getNextField());
+		System.out.println("Moved the pawn to "
+				+ home.getNextField().getPoint().toString());
+		sleep(1000);
+	}
+
+	/**
+	 * Tester method. Moves a pawn along the normal fields. First finds an
+	 * available pawn, then moves it.
+	 * 
+	 * @param pawns
+	 *            The pawns
+	 * @param home
+	 *            The homefield
+	 * @param goal
+	 *            The associated goal
+	 * @param distance
+	 *            The distance to move
+	 */
+	private void testMovePawnNormal(final ArrayList<Pawn> pawns,
+			final HomeField home, final GoalField goal, final int distance) {
+		Pawn thePawn = null;
+		for (Pawn p : pawns) {
+			if (p.getField() != home) {
+				thePawn = p;
+				break;
+			}
+		}
+		if (thePawn != null) {
+			testMovePawnSpaces(thePawn, (BasicField) thePawn.getField(), goal,
+					distance);
+		} else {
+			System.err.println("Unexpected error. Missing pawn!");
+		}
+		sleep(1000);
+	}
+
+	/**
+	 * Tester method. Moves a pawn along the normal fields. Checks for matching
+	 * goal fields. Once distance left to travel is zero, remains at field.
+	 * 
+	 * @param pawn
+	 * @param field
+	 * @param goal
+	 * @param distance
+	 */
+	private void testMovePawnSpaces(final Pawn pawn, final BasicField field,
+			final GoalField goal, final int distance) {
+		if (distance == 0) {
+			pawn.moveToField(field);
+			System.out.println("Moved the pawn to "
+					+ field.getPoint().toString());
+		} else {
+			if (field.hasGoalField()) {
+				if (field.getGoalField() == goal) {
+					testMovePawnGoal(pawn, goal, distance - 1);
+				} else {
+					System.out
+							.println("Noticed a goal field ... failed to be interested");
+					testMovePawnSpaces(pawn, (BasicField) field.getNextField(),
+							goal, distance - 1);
+				}
+			} else {
+				testMovePawnSpaces(pawn, (BasicField) field.getNextField(),
+						goal, distance - 1);
+			}
+		}
+	}
+
+	/**
+	 * Tester method. Moves a pawn along the goal fields.
+	 * 
+	 * @param pawn
+	 * @param goal
+	 * @param distance
+	 */
+	private boolean testMovePawnGoal(final Pawn pawn, final GoalField goal,
+			final int distance) {
+		if (distance == 0) {
+			pawn.moveToField(goal);
+			System.out.println("Moved the pawn to goal! At "
+					+ goal.getPoint().toString());
+			return true;
+		} else if (!goal.hasNextField()) {
+			System.err
+					.println("Oops, invalid move attempted! Goal runway is too short.");
+			return false;
+		} else {
+			return testMovePawnGoal(pawn, (GoalField) goal.getNextField(),
+					distance - 1);
+		}
+	}
+
+	private boolean checkIfGoalFull(final ArrayList<GoalField> goal) {
+		boolean isFull = true;
+		for (GoalField g : goal) {
+			isFull &= g.hasPawn();
+		}
+		return isFull;
+	}
+
+	private boolean checkIfGoalOccupied(final ArrayList<GoalField> goal) {
+		boolean hasPawn = false;
+		for (GoalField g : goal) {
+			hasPawn |= g.hasPawn();
+		}
+		return hasPawn;
+	}
+
+	private void sleep(final long milli) {
+		try {
+			Thread.sleep(milli);
+		} catch (InterruptedException ie) {
+			System.err
+					.println("Unexpected timing error. Aborting thread sleep");
 		}
 	}
 
@@ -132,7 +291,8 @@ public class LudoGame extends JPanel {
 	private void setupTheGrid() {
 		for (int i = 0; i < GRIDNUM; i++) {
 			for (int j = 0; j < GRIDNUM; j++) {
-				THEGRID[i][j] = new Point(i * GRIDSIZE, j * GRIDSIZE);
+				THEGRID[i][j] = new Point(BOARDLEFTOFFSET + (i * GRIDSIZE),
+						BOARDTOPOFFSET + (j * GRIDSIZE));
 			}
 		}
 	}
@@ -148,10 +308,10 @@ public class LudoGame extends JPanel {
 	 */
 	private void setupTheFields() {
 
-		final int[] gridI = { 10, 10, 9, 8, 7, 6, 6, 6, 6, 6, 5, 4, 4, 4, 4, 4,
+		final int[] gridJ = { 10, 10, 9, 8, 7, 6, 6, 6, 6, 6, 5, 4, 4, 4, 4, 4,
 				3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7,
 				8, 9, 10 };
-		final int[] gridJ = { 5, 4, 4, 4, 4, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4,
+		final int[] gridI = { 5, 4, 4, 4, 4, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4,
 				4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 9, 10, 10, 10, 9, 8, 7, 6,
 				6, 6, 6, 6 };
 		Field lastField = null;
@@ -162,38 +322,38 @@ public class LudoGame extends JPanel {
 				if (i == 0) {
 					firstField = theTrack;
 					System.out.println(firstField.getPoint().toString());
-					int[] goalI = { 9, 8, 7, 6 };
-					int[] goalJ = { 5, 5, 5, 5 };
+					int[] goalJ = { 9, 8, 7, 6 };
+					int[] goalI = { 5, 5, 5, 5 };
 					setupTheGoals(redGoal, goalI, goalJ, theTrack);
 				} else if (i == 10) {
-					int[] goalI = { 5, 5, 5, 5 };
-					int[] goalJ = { 1, 2, 3, 4 };
+					int[] goalJ = { 5, 5, 5, 5 };
+					int[] goalI = { 1, 2, 3, 4 };
 					setupTheGoals(blueGoal, goalI, goalJ, theTrack);
 				} else if (i == 20) {
-					int[] goalI = { 1, 2, 3, 4 };
-					int[] goalJ = { 5, 5, 5, 5 };
+					int[] goalJ = { 1, 2, 3, 4 };
+					int[] goalI = { 5, 5, 5, 5 };
 					setupTheGoals(yellowGoal, goalI, goalJ, theTrack);
 				} else if (i == 30) {
-					int[] goalI = { 9, 8, 7, 6 };
-					int[] goalJ = { 5, 5, 5, 5 };
+					int[] goalJ = { 9, 8, 7, 6 };
+					int[] goalI = { 5, 5, 5, 5 };
 					setupTheGoals(greenGoal, goalI, goalJ, theTrack);
 				}
 			} else if ((i - 1) % 10 == 0) {
 				if (i == 1) {
-					int[] homeI = { 8, 9, 8, 9 };
-					int[] homeJ = { 1, 1, 2, 2 };
+					int[] homeJ = { 8, 9, 8, 9 };
+					int[] homeI = { 1, 1, 2, 2 };
 					redHome = setupTheHome(homeI, homeJ, theTrack);
 				} else if (i == 11) {
-					int[] homeI = { 1, 1, 2, 2 };
-					int[] homeJ = { 2, 1, 2, 1 };
+					int[] homeJ = { 1, 1, 2, 2 };
+					int[] homeI = { 2, 1, 2, 1 };
 					blueHome = setupTheHome(homeI, homeJ, theTrack);
 				} else if (i == 21) {
-					int[] homeI = { 2, 1, 2, 1 };
-					int[] homeJ = { 9, 9, 8, 8 };
+					int[] homeJ = { 2, 1, 2, 1 };
+					int[] homeI = { 9, 9, 8, 8 };
 					yellowHome = setupTheHome(homeI, homeJ, theTrack);
 				} else if (i == 31) {
-					int[] homeI = { 9, 9, 8, 8 };
-					int[] homeJ = { 8, 9, 8, 9 };
+					int[] homeJ = { 9, 9, 8, 8 };
+					int[] homeI = { 8, 9, 8, 9 };
 					greenHome = setupTheHome(homeI, homeJ, theTrack);
 				}
 			}
@@ -245,20 +405,14 @@ public class LudoGame extends JPanel {
 	 *            the home field positioning (TOP or BOTTOM)
 	 */
 	private void addPawns(final ImageIcon imgSrc,
-			final ArrayList<Pawn> pawnList, final int homeFieldX,
-			final int homeFieldY) {
+			final ArrayList<Pawn> pawnList, final HomeField home) {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 2; j++) {
 				JLabel jl = new JLabel(imgSrc);
 				boardPane.add(jl, new Integer(1));
 				Dimension size = jl.getPreferredSize();
-				jl.setBounds(BOARDLEFTOFFSET
-						+ (THEGRID[i % 2 + homeFieldX][j % 2 + homeFieldY].x),
-						BOARDTOPOFFSET
-								+ THEGRID[i % 2 + homeFieldX][j % 2
-										+ homeFieldY].y, size.width,
-						size.height);
-				Pawn p = new Pawn(jl, jl.getLocation());
+				jl.setBounds(0, 0, size.width, size.height);
+				Pawn p = new Pawn(jl, home);
 				pawnList.add(p);
 			}
 		}
@@ -299,12 +453,15 @@ public class LudoGame extends JPanel {
 						null, possibilities, possibilities[0]);
 
 		// TODO: Pass in number of humans!
-		JComponent contentPane = new LudoGame();
+		LudoGame contentPane = new LudoGame();
 		contentPane.setOpaque(true);
 		frame.setContentPane(contentPane);
 
 		frame.pack();
 		frame.setVisible(true);
+
+		// And the game is started!
+		contentPane.startTheGame();
 	}
 
 	/**

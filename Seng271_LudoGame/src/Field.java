@@ -12,11 +12,11 @@ public class Field {
 		setPoint(point);
 	}
 
-	public final boolean hasNextField() {
+	public boolean hasNextField() {
 		return (getNextField() != null ? true : false);
 	}
 
-	public final Field getNextField() {
+	public Field getNextField() {
 		return nextField;
 	}
 
@@ -24,7 +24,7 @@ public class Field {
 		this.nextField = nextField;
 	}
 
-	public final boolean hasPawn() {
+	public boolean hasPawn() {
 		return (getPawn() != null ? true : false);
 	}
 

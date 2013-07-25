@@ -17,18 +17,36 @@ public class HomeField extends Field {
 	public final Pawn getPawn() {
 		Pawn p = null;
 		if (hasPawn()) {
-			p = homePawns.remove(homePawns.size() - 1);
+			p = homePawns.remove(0);
 		}
 		return p;
 	}
 
-	public final void addPawn(final Pawn pawn) {
-		homePawns.add(pawn);
+	@Override
+	public final boolean hasPawn() {
+		return (homePawns.size() > 0);
+	}
+
+	public final boolean isFull() {
+		return (homePawns.size() == 4);
+	}
+
+	public final void setPawns(final ArrayList<Pawn> pawns) {
+		for (Pawn p : pawns) {
+			setPawn(p);
+		}
+	}
+
+	@Override
+	public final void setPawn(final Pawn pawn) {
+		if (pawn != null) {
+			homePawns.add(pawn);
+		}
 	}
 
 	@Override
 	public Point getPoint() {
-		return null;
+		return getPoints().get(homePawns.size());
 	}
 
 	public ArrayList<Point> getPoints() {
