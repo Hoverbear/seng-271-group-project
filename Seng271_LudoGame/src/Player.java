@@ -5,7 +5,7 @@ import java.util.ArrayList;
  */
 public class Player {
 	private final Strategy strategy;
-	private final GoalField goalField;
+	private final ArrayList<GoalField> goalField;
 	private final HomeField homeField;
 	// Should be a set of 4.
 	private final ArrayList<Pawn> pawns = new ArrayList<Pawn>();
@@ -24,7 +24,7 @@ public class Player {
 	 *            The set of the players pawns. These should be created by the
 	 *            Ludo game initialization.
 	 */
-	public Player(final Strategy strategy, final GoalField goalField,
+	public Player(final Strategy strategy, final ArrayList<GoalField> goalField,
 			final HomeField homeField, final ArrayList<Pawn> pawns) {
 		this.strategy = strategy;
 		this.goalField = goalField;
