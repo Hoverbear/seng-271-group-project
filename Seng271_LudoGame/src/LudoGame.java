@@ -62,6 +62,8 @@ public class LudoGame extends JPanel {
 	private final ArrayList<GoalField> yellowGoal = new ArrayList<GoalField>();
 	private final ArrayList<GoalField> greenGoal = new ArrayList<GoalField>();
 
+	private final ArrayList<Player> players = new ArrayList<Player>();
+
 	// private final Strategy redStrategy;
 	// private final Strategy blueStrategy;
 	// private final Strategy greenStrategy;
@@ -111,23 +113,13 @@ public class LudoGame extends JPanel {
 		add(boardPane);
 	}
 
-	private Player[] setupThePlayers(int numberOfHumans) {
-		// TODO: Make these arrays globally exposed?
+	private void setupThePlayers(int numberOfHumans) {
 
-		// We'll initialize the players later.
-		Player redPlayer = null;
-		Player bluePlayer = null;
-		Player yellowPlayer = null;
-		Player greenPlayer = null;
-
-		// Set them up in array so they're bloody easy to iterate through.
-		Player[] players = { redPlayer, bluePlayer, yellowPlayer, greenPlayer };
-
-		// Same deal with goalFields
+		// Set up the GoalFields in order
 		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
 				Arrays.asList(redGoal, blueGoal, yellowGoal, greenGoal));
 
-		// Same deal with goalFields
+		// Same deal with Pawn lists
 		ArrayList<ArrayList<Pawn>> pawns = new ArrayList<ArrayList<Pawn>>(
 				Arrays.asList(redPawns, bluePawns, yellowPawns, greenPawns));
 
@@ -138,8 +130,8 @@ public class LudoGame extends JPanel {
 		for (int i = 0; i < 4; i++) {
 			// Do we need the next player to be a human?
 			if (numberOfHumans > i) {
-				players[i] = new Player(new HumanStrategy(), goalFields.get(i),
-						homeFields[i], pawns.get(i));
+				players.add(new Player(new HumanStrategy(), goalFields.get(i),
+						homeFields[i], pawns.get(i)));
 			} else {
 				// Choose an AI strategy.
 				int choice = (int) (1 + Math.random() * 4);
@@ -162,12 +154,11 @@ public class LudoGame extends JPanel {
 					break;
 				}
 				// Create the AI.
-				players[i] = new Player(someStrategy, goalFields.get(i),
-						homeFields[i], pawns.get(i));
+				players.add(new Player(someStrategy, goalFields.get(i),
+						homeFields[i], pawns.get(i)));
 			}
 		}
 		// All the players are initialized now.
-		return players;
 	}
 
 	/**
