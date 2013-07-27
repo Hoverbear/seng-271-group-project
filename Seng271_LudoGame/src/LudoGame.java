@@ -171,32 +171,15 @@ public class LudoGame extends JPanel {
 	}
 
 	private void testGame() {
-		int roll = testRollDie();
-		// Checks if any pawns are out.
-		if (redHome.isFull() && roll == 6) {
-			testMovePawnFromHome(redHome);
-			roll = testRollDie();
+		for (Player pl : players) {
+			System.out.println("Player " + players.indexOf(pl)
+					+ " starts turn ...");
+			int roll = testRollDie();
+			pl.planMove(roll);
+			sleep(100);
 		}
-
-		// Checks if any pawns are out. Intentional redundancy.
-		if (!redHome.isFull()) {
-			// If there's a pawn in the goal, see if it can move.
-			if (checkIfGoalOccupied(redGoal)) {
-				// TODO
-			} else {
-				testMovePawnNormal(redPawns, redHome, redGoal.get(3), roll);
-			}
-		}
-
-		// Escape/repeat conditions.
-		// if (checkIfGoalFull(redGoal)) {
-		if (checkIfGoalOccupied(redGoal)) {
-			System.out.println("And you're done!");
-		} else {
-			System.out.println("Next round!\n");
-			sleep(1000);
-			testGame();
-		}
+		System.out.println("Round done! Next round starting...\n");
+		testGame();
 	}
 
 	private int testRollDie() {
@@ -204,122 +187,6 @@ public class LudoGame extends JPanel {
 		System.out.println("Roll: " + playerRoll);
 		sleep(500);
 		return playerRoll;
-	}
-
-	/**
-	 * Tester method. Moves a pawn out of its homefield.
-	 * 
-	 * @param home
-	 */
-	private void testMovePawnFromHome(final HomeField home) {
-		Pawn p = home.getPawn();
-		p.moveToField(home.getNextField());
-		System.out.println("Moved the pawn to "
-				+ home.getNextField().getPoint().toString());
-		sleep(1000);
-	}
-
-	/**
-	 * Tester method. Moves a pawn along the normal fields. First finds an
-	 * available pawn, then moves it.
-	 * 
-	 * @param pawns
-	 *            The pawns
-	 * @param home
-	 *            The homefield
-	 * @param goal
-	 *            The associated goal
-	 * @param distance
-	 *            The distance to move
-	 */
-	private void testMovePawnNormal(final ArrayList<Pawn> pawns,
-			final HomeField home, final GoalField goal, final int distance) {
-		Pawn thePawn = null;
-		for (Pawn p : pawns) {
-			if (p.getField() != home) {
-				thePawn = p;
-				break;
-			}
-		}
-		if (thePawn != null) {
-			testMovePawnSpaces(thePawn, (BasicField) thePawn.getField(), goal,
-					distance);
-		} else {
-			System.err.println("Unexpected error. Missing pawn!");
-		}
-		sleep(1000);
-	}
-
-	/**
-	 * Tester method. Moves a pawn along the normal fields. Checks for matching
-	 * goal fields. Once distance left to travel is zero, remains at field.
-	 * 
-	 * @param pawn
-	 * @param field
-	 * @param goal
-	 * @param distance
-	 */
-	private void testMovePawnSpaces(final Pawn pawn, final BasicField field,
-			final GoalField goal, final int distance) {
-		if (distance == 0) {
-			pawn.moveToField(field);
-			System.out.println("Moved the pawn to "
-					+ field.getPoint().toString());
-		} else {
-			if (field.hasGoalField()) {
-				if (field.getGoalField() == goal) {
-					testMovePawnGoal(pawn, goal, distance - 1);
-				} else {
-					System.out
-							.println("Noticed a goal field ... failed to be interested");
-					testMovePawnSpaces(pawn, (BasicField) field.getNextField(),
-							goal, distance - 1);
-				}
-			} else {
-				testMovePawnSpaces(pawn, (BasicField) field.getNextField(),
-						goal, distance - 1);
-			}
-		}
-	}
-
-	/**
-	 * Tester method. Moves a pawn along the goal fields.
-	 * 
-	 * @param pawn
-	 * @param goal
-	 * @param distance
-	 */
-	private boolean testMovePawnGoal(final Pawn pawn, final GoalField goal,
-			final int distance) {
-		if (distance == 0) {
-			pawn.moveToField(goal);
-			System.out.println("Moved the pawn to goal! At "
-					+ goal.getPoint().toString());
-			return true;
-		} else if (!goal.hasNextField()) {
-			System.err
-					.println("Oops, invalid move attempted! Goal runway is too short.");
-			return false;
-		} else {
-			return testMovePawnGoal(pawn, (GoalField) goal.getNextField(),
-					distance - 1);
-		}
-	}
-
-	private boolean checkIfGoalFull(final ArrayList<GoalField> goal) {
-		boolean isFull = true;
-		for (GoalField g : goal) {
-			isFull &= g.hasPawn();
-		}
-		return isFull;
-	}
-
-	private boolean checkIfGoalOccupied(final ArrayList<GoalField> goal) {
-		boolean hasPawn = false;
-		for (GoalField g : goal) {
-			hasPawn |= g.hasPawn();
-		}
-		return hasPawn;
 	}
 
 	private void sleep(final long milli) {
@@ -370,7 +237,6 @@ public class LudoGame extends JPanel {
 			if (i % 10 == 0) {
 				if (i == 0) {
 					firstField = theTrack;
-					System.out.println(firstField.getPoint().toString());
 					int[] goalJ = { 9, 8, 7, 6 };
 					int[] goalI = { 5, 5, 5, 5 };
 					setupTheGoals(redGoal, goalI, goalJ, theTrack);
@@ -383,8 +249,8 @@ public class LudoGame extends JPanel {
 					int[] goalI = { 5, 5, 5, 5 };
 					setupTheGoals(yellowGoal, goalI, goalJ, theTrack);
 				} else if (i == 30) {
-					int[] goalJ = { 9, 8, 7, 6 };
-					int[] goalI = { 5, 5, 5, 5 };
+					int[] goalJ = { 5, 5, 5, 5 };
+					int[] goalI = { 9, 8, 7, 6 };
 					setupTheGoals(greenGoal, goalI, goalJ, theTrack);
 				}
 			} else if ((i - 1) % 10 == 0) {
