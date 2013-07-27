@@ -9,6 +9,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -456,9 +457,13 @@ public class LudoGame extends JPanel {
 			final ArrayList<Pawn> pawnList, final HomeField home) {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 2; j++) {
-				JLabel jl = new JLabel(imgSrc);
+				// JLabel jl = new JLabel(imgSrc);
+				JButton jl = new JButton(imgSrc);
+				jl.setBorderPainted(false);
+				jl.setContentAreaFilled(false);
 				boardPane.add(jl, new Integer(1));
-				Dimension size = jl.getPreferredSize();
+				Dimension size = new Dimension(jl.getIcon().getIconWidth(), jl
+						.getIcon().getIconHeight());
 				jl.setBounds(0, 0, size.width, size.height);
 				Pawn p = new Pawn(jl, home);
 				pawnList.add(p);

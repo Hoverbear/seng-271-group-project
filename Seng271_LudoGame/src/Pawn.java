@@ -1,9 +1,9 @@
 import java.awt.Point;
 
-import javax.swing.JLabel;
+import javax.swing.JButton;
 
 public class Pawn {
-	private final JLabel imgSrc;
+	private final JButton imgSrc;
 	private Point position;
 	private Field location;
 
@@ -12,7 +12,7 @@ public class Pawn {
 	 * @param source
 	 * @param pos
 	 */
-	public Pawn(final JLabel source, final Field loc) {
+	public Pawn(final JButton source, final Field loc) {
 		this.imgSrc = source;
 		moveToField(loc);
 	}
@@ -21,7 +21,7 @@ public class Pawn {
 	 * 
 	 * @return
 	 */
-	protected JLabel getImgSrc() {
+	protected JButton getImgSrc() {
 		return imgSrc;
 	}
 
