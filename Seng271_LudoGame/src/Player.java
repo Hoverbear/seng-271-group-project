@@ -94,7 +94,7 @@ public class Player {
 	/**
 	 * Moves a pawn out of its homefield.
 	 */
-	private void movePawnFromHome() {
+	public void movePawnFromHome() {
 		if (checkValidMove(homeField.getNextField())) {
 			Pawn p = homeField.getPawn();
 			p.moveToField(homeField.getNextField());
@@ -111,7 +111,7 @@ public class Player {
 	 * @param distance
 	 *            The distance to move
 	 */
-	private void movePawnNormal(final int distance) {
+	public void movePawnNormal(final int distance) {
 		Pawn thePawn = null;
 		for (Pawn p : pawns) {
 			if (p.isAtBasic()) {
@@ -135,7 +135,7 @@ public class Player {
 	 * @param field
 	 * @param distance
 	 */
-	private void movePawnSpaces(final Pawn pawn, final BasicField field,
+	public void movePawnSpaces(final Pawn pawn, final BasicField field,
 			final int distance) {
 		if (distance == 0 && checkValidMove(field)) {
 			pawn.moveToField(field);
