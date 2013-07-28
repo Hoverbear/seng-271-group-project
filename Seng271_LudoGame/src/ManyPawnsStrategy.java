@@ -1,15 +1,15 @@
-import java.util.ArrayList;
-
 /** 
  *
  */
 public class ManyPawnsStrategy implements Strategy {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see Strategy#doMove()
 	 */
 	@Override
-	public Pawn doMove(ArrayList<Pawn> Pawns, Die die) {
+	public Pawn doMove(Player player, int dieRoll) {
 		// TODO Auto-generated method stub
 		return null;
 	}

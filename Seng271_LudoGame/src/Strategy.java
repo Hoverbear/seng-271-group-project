@@ -1,15 +1,14 @@
-import java.util.ArrayList;
-
 public interface Strategy {
-	
+
 	/**
 	 * 
-	 * @param Pawns
-	 * 			A list of pawns that the player owns.
-	 * @param die
-	 * 			The die, so the strategy can determine the appropriate move.
-	 * @return
-	 * 			The new pawn arraylist.
+	 * @param player
+	 *            The Player the strategy belongs to. For determining the Pawns
+	 *            and associated Fields to decide a move.
+	 * @param dieRoll
+	 *            The die roll, so the strategy can determine the appropriate
+	 *            move.
+	 * @return The Pawn to move
 	 */
-	public Pawn doMove(ArrayList<Pawn> Pawns, Die die);
+	public Pawn doMove(final Player player, final int dieRoll);
 }

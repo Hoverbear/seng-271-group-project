@@ -1,4 +1,6 @@
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -85,17 +88,41 @@ public class LudoGame extends JPanel {
 		final ImageIcon bluePawnImg = createImageIcon("src/blue_pawn.png");
 		final ImageIcon yellowPawnImg = createImageIcon("src/yellow_pawn.png");
 		final ImageIcon greenPawnImg = createImageIcon("src/green_pawn.png");
+		final ImageIcon dieImg = createImageIcon("src/die_1.jpg");
 
 		setupTheGrid();
 
 		boardPane = new JLayeredPane();
-		boardPane.setPreferredSize(new Dimension(APPWIDTH, APPHEIGHT));
+		boardPane.setPreferredSize(new Dimension(540, 540));
+		// boardPane.setPreferredSize(new Dimension(APPWIDTH, APPHEIGHT));
 
 		JLabel board = new JLabel(boardBackground);
 		boardPane.add(board, new Integer(0));
 		Dimension boardSize = board.getPreferredSize();
 		board.setBounds(BOARDLEFTOFFSET, BOARDTOPOFFSET, boardSize.width,
 				boardSize.height);
+
+		JPanel rightPane = new JPanel();
+		// rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
+		rightPane.setLayout(new GridBagLayout());
+
+		JPanel dieLayer = new JPanel();
+		dieLayer.setPreferredSize(new Dimension(200, 200));
+		dieLayer.setBorder(BorderFactory.createTitledBorder("Die Roll"));
+		dieLayer.setLayout(new GridBagLayout());
+
+		JLabel die = new JLabel(dieImg);
+		dieLayer.add(die, new GridBagConstraints());
+
+		JPanel playersLayer = new JPanel();
+		playersLayer.setPreferredSize(new Dimension(200, 200));
+		playersLayer.setBorder(BorderFactory.createTitledBorder("Players"));
+
+		GridBagConstraints theGrid = new GridBagConstraints();
+		theGrid.gridy = 0;
+		rightPane.add(dieLayer, theGrid);
+		theGrid.gridy = 1;
+		rightPane.add(playersLayer, theGrid);
 
 		setupTheFields();
 
@@ -107,11 +134,12 @@ public class LudoGame extends JPanel {
 		addPawns(greenPawnImg, greenPawns, greenHome);
 
 		// Get an instance of the singleton Die.
-		theDie = Die.getInstance();
-		// TODO: Add graphics for Die.
+		theDie = Die.getInstance(die);
 
 		// Finally, boardPane is added to the game frame.
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(boardPane);
+		add(rightPane);
 	}
 
 	/**
@@ -130,8 +158,8 @@ public class LudoGame extends JPanel {
 						+ " starts turn ...");
 				int roll = 0;
 				do {
-					roll = testRollDie();
-					pl.planMove(roll);
+					roll = rollDie();
+					pl.doMove(roll);
 					sleep(100);
 				} while (roll == 6);
 				System.out.println("Turn done!\n");
@@ -140,6 +168,7 @@ public class LudoGame extends JPanel {
 					theShowMustGoOn = false;
 					break;
 				}
+				sleep(100);
 			}
 			if (theShowMustGoOn) {
 				System.out.println("Round done! Next round starting...\n");
@@ -147,9 +176,10 @@ public class LudoGame extends JPanel {
 		}
 	}
 
-	private int testRollDie() {
+	private int rollDie() {
 		int playerRoll = theDie.roll();
 		System.out.println("Roll: " + playerRoll);
+		theDie.setImage(createImageIcon("src/die_" + playerRoll + ".jpg"));
 		sleep(500);
 		return playerRoll;
 	}
@@ -292,7 +322,11 @@ public class LudoGame extends JPanel {
 						homeFields[i], pawns.get(i)));
 			} else {
 				// Choose an AI strategy.
-				int choice = (int) (1 + Math.random() * 4);
+
+				// int choice = (int) (1 + Math.random() * 4);
+				// TODO change back to random after strategy implementation
+				int choice = 3; // force the LonePawnStrategy
+
 				Strategy someStrategy;
 				switch (choice) {
 				case 1:

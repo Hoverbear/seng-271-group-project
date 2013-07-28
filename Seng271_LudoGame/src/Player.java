@@ -34,9 +34,18 @@ public class Player {
 	}
 
 	/**
-	 * 
+	 * Calls on the strategy to perform a move.
 	 */
-	public final void planMove(final int dieRoll) {
+	public final void doMove(final int dieRoll) {
+		// testMove(dieRoll);
+		strategy.doMove(this, dieRoll);
+	}
+
+	/*
+	 * Preserved temporarily in case needed. Will remove with next commit.
+	 * -Daniel
+	 */
+	private void testMove(final int dieRoll) {
 		// TODO The Strategy should take care of this
 		if ((homeField.getPawnCount() + getGoalOccupiedCount() == 4)
 				&& dieRoll == 6) {
@@ -61,11 +70,17 @@ public class Player {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	public void doMove() {
+	public final HomeField getHomeField() {
+		return homeField;
+	}
 
+	public final GoalField getEntryGoalField() {
+		// The end of the GoalField array is where the entry point is.
+		return goalField.get(goalField.size() - 1);
+	}
+
+	public final ArrayList<Pawn> getPawns() {
+		return pawns;
 	}
 
 	/**
@@ -172,7 +187,7 @@ public class Player {
 		return isFull;
 	}
 
-	private boolean checkIfGoalOccupied() {
+	public boolean checkIfGoalOccupied() {
 		boolean hasPawn = false;
 		for (GoalField g : goalField) {
 			hasPawn |= g.hasPawn();
@@ -180,7 +195,7 @@ public class Player {
 		return hasPawn;
 	}
 
-	private int getGoalOccupiedCount() {
+	public int getGoalOccupiedCount() {
 		int numPawns = 0;
 		for (GoalField g : goalField) {
 			if (g.hasPawn()) {
