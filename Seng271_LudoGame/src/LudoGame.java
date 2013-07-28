@@ -80,6 +80,9 @@ public class LudoGame extends JPanel {
 
 	/**
 	 * Constructor for the game board. Adds layered images and game pieces.
+	 * 
+	 * @param numberOfHumans
+	 *            The number of humans to be playing the game.
 	 */
 	private LudoGame(int numberOfHumans) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -176,14 +179,23 @@ public class LudoGame extends JPanel {
 		}
 	}
 
+	/**
+	 * 
+	 * @return The players roll of the die.
+	 */
 	private int rollDie() {
 		int playerRoll = theDie.roll();
 		System.out.println("Roll: " + playerRoll);
 		theDie.setImage(createImageIcon("src/die_" + playerRoll + ".jpg"));
-		sleep(500);
+		sleep(500); // This simulates being held in suspense.
 		return playerRoll;
 	}
 
+	/**
+	 * 
+	 * @param milli
+	 *            The amount of time to wait (In milliseconds)
+	 */
 	private void sleep(final long milli) {
 		try {
 			Thread.sleep(milli);
@@ -275,6 +287,14 @@ public class LudoGame extends JPanel {
 		lastField.setNextField(firstField);
 	}
 
+	/**
+	 * Set up the goal fields for each player.
+	 * 
+	 * @param theGoal
+	 * @param gridI
+	 * @param gridJ
+	 * @param linker
+	 */
 	private void setupTheGoals(final ArrayList<GoalField> theGoal,
 			final int[] gridI, final int[] gridJ, final BasicField linker) {
 		GoalField lastField = null;
@@ -290,6 +310,13 @@ public class LudoGame extends JPanel {
 		linker.setGoalField(currentField);
 	}
 
+	/**
+	 * 
+	 * @param gridI
+	 * @param gridJ
+	 * @param entry
+	 * @return
+	 */
 	private HomeField setupTheHome(final int[] gridI, final int[] gridJ,
 			final BasicField entry) {
 		final ArrayList<Point> points = new ArrayList<Point>();
@@ -301,6 +328,13 @@ public class LudoGame extends JPanel {
 		return hf;
 	}
 
+	/**
+	 * Sets up all of the players with strategies and their owned pawns, etc.
+	 * 
+	 * @param numberOfHumans
+	 *            The number of human players we will be seeing. The rest of the
+	 *            players will be randomly assigned a strategy.
+	 */
 	private void setupThePlayers(int numberOfHumans) {
 
 		// Set up the GoalFields in order
