@@ -70,10 +70,18 @@ public class Player {
 		}
 	}
 
+	/**
+	 * 
+	 * @return The home field.
+	 */
 	public final HomeField getHomeField() {
 		return homeField;
 	}
 
+	/**
+	 * 
+	 * @return The goal field.
+	 */
 	public final GoalField getEntryGoalField() {
 		// The end of the GoalField array is where the entry point is.
 		return goalField.get(goalField.size() - 1);
@@ -179,6 +187,10 @@ public class Player {
 		}
 	}
 
+	/**
+	 * 
+	 * @return True if the player's goal fields are full.
+	 */
 	public boolean checkIfGoalFull() {
 		boolean isFull = true;
 		for (GoalField g : goalField) {
@@ -187,6 +199,10 @@ public class Player {
 		return isFull;
 	}
 
+	/**
+	 * 
+	 * @return This returns true if one or more goal field has a pawn.
+	 */
 	public boolean checkIfGoalOccupied() {
 		boolean hasPawn = false;
 		for (GoalField g : goalField) {
@@ -195,6 +211,10 @@ public class Player {
 		return hasPawn;
 	}
 
+	/**
+	 * 
+	 * @return The number of pawns occupying the goal.
+	 */
 	public int getGoalOccupiedCount() {
 		int numPawns = 0;
 		for (GoalField g : goalField) {
@@ -205,6 +225,12 @@ public class Player {
 		return numPawns;
 	}
 
+	/**
+	 * 
+	 * @param field
+	 *            The field that the player wishes to move the pawn to.
+	 * @return True if the move is valid.
+	 */
 	private boolean checkValidMove(final Field field) {
 		if (field.hasPawn()) {
 			if (isOwnPawn(field.getPawn())) {
@@ -219,6 +245,12 @@ public class Player {
 		}
 	}
 
+	/**
+	 * 
+	 * @param foundPawn
+	 *            The pawn the player wishes to check.
+	 * @return True if the foundPawn is the player's own pawn.
+	 */
 	private boolean isOwnPawn(final Pawn foundPawn) {
 		boolean ownPawn = false;
 		for (Pawn p : pawns) {
@@ -227,6 +259,11 @@ public class Player {
 		return ownPawn;
 	}
 
+	/**
+	 * 
+	 * @param milli
+	 *            The amount of milliseconds to sleep.
+	 */
 	private void sleep(final long milli) {
 		try {
 			Thread.sleep(milli);
