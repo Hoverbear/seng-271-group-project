@@ -11,5 +11,5 @@ public interface Strategy {
 	 * @return
 	 * 			The new pawn arraylist.
 	 */
-	public ArrayList<Pawn> doMove(ArrayList<Pawn> Pawns, Die die);
+	public Pawn doMove(ArrayList<Pawn> Pawns, Die die);
 }
