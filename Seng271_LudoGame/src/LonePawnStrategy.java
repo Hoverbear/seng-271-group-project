@@ -20,13 +20,19 @@ public class LonePawnStrategy implements Strategy {
 		theGoal = player.getEntryGoalField();
 		thePawns = player.getPawns();
 
+		// If there are no pawns on the field and you can play a pawn to the
+		// field.
 		if ((theHome.getPawnCount() + player.getGoalOccupiedCount() == 4)
 				&& dieRoll == 6) {
+			// If there are pawns in the home field.
 			if (theHome.hasPawn()) {
+				// Play a pawn onto the field.
 				player.movePawnFromHome();
 			} else {
+				// Since there must be 4 pawns in Goal, the player has won.
 				System.err.println("A player who won is trying to move...");
 			}
+			// If the player shouldn't add a new pawn to the field.
 		} else if (!(theHome.getPawnCount() + player.getGoalOccupiedCount() == 4)) {
 			if (player.checkIfGoalFull()) {
 				// TODO
@@ -34,11 +40,13 @@ public class LonePawnStrategy implements Strategy {
 				player.movePawnNormal(dieRoll);
 			}
 		}
+		// If the player has no pawns to play, and doesn't have a 6, he passes.
 
+		// If they win
 		if (player.checkIfGoalFull()) {
 			System.out.println("This player is done!\n");
 		} else {
-			//
+			// TODO: Please fill this out!
 		}
 
 		return null;
