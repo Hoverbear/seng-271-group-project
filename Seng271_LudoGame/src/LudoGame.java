@@ -114,54 +114,6 @@ public class LudoGame extends JPanel {
 		add(boardPane);
 	}
 
-	private void setupThePlayers(int numberOfHumans) {
-
-		// Set up the GoalFields in order
-		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
-				Arrays.asList(redGoal, blueGoal, yellowGoal, greenGoal));
-
-		// Same deal with Pawn lists
-		ArrayList<ArrayList<Pawn>> pawns = new ArrayList<ArrayList<Pawn>>(
-				Arrays.asList(redPawns, bluePawns, yellowPawns, greenPawns));
-
-		// And homeFields
-		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
-
-		// Loop through the four players.
-		for (int i = 0; i < 4; i++) {
-			// Do we need the next player to be a human?
-			if (numberOfHumans > i) {
-				players.add(new Player(new HumanStrategy(), goalFields.get(i),
-						homeFields[i], pawns.get(i)));
-			} else {
-				// Choose an AI strategy.
-				int choice = (int) (1 + Math.random() * 4);
-				Strategy someStrategy;
-				switch (choice) {
-				case 1:
-					someStrategy = new AggressiveStrategy();
-					break;
-				case 2:
-					someStrategy = new DefensiveStrategy();
-					break;
-				case 3:
-					someStrategy = new LonePawnStrategy();
-					break;
-				case 4:
-					someStrategy = new ManyPawnsStrategy();
-					break;
-				default:
-					someStrategy = new ManyPawnsStrategy();
-					break;
-				}
-				// Create the AI.
-				players.add(new Player(someStrategy, goalFields.get(i),
-						homeFields[i], pawns.get(i)));
-			}
-		}
-		// All the players are initialized now.
-	}
-
 	/**
 	 * Start of a test method. Anything that should happen after board setup
 	 * goes here.
@@ -171,15 +123,28 @@ public class LudoGame extends JPanel {
 	}
 
 	private void testGame() {
-		for (Player pl : players) {
-			System.out.println("Player " + players.indexOf(pl)
-					+ " starts turn ...");
-			int roll = testRollDie();
-			pl.planMove(roll);
-			sleep(100);
+		boolean theShowMustGoOn = true;
+		while (theShowMustGoOn) {
+			for (Player pl : players) {
+				System.out.println("Player " + players.indexOf(pl)
+						+ " starts turn ...");
+				int roll = 0;
+				do {
+					roll = testRollDie();
+					pl.planMove(roll);
+					sleep(100);
+				} while (roll == 6);
+				System.out.println("Turn done!\n");
+				if (pl.checkIfGoalFull()) {
+					System.err.println("We have a winner!!!");
+					theShowMustGoOn = false;
+					break;
+				}
+			}
+			if (theShowMustGoOn) {
+				System.out.println("Round done! Next round starting...\n");
+			}
 		}
-		System.out.println("Round done! Next round starting...\n");
-		testGame();
 	}
 
 	private int testRollDie() {
@@ -304,6 +269,54 @@ public class LudoGame extends JPanel {
 		HomeField hf = new HomeField(points);
 		hf.setNextField(entry);
 		return hf;
+	}
+
+	private void setupThePlayers(int numberOfHumans) {
+
+		// Set up the GoalFields in order
+		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
+				Arrays.asList(redGoal, blueGoal, yellowGoal, greenGoal));
+
+		// Same deal with Pawn lists
+		ArrayList<ArrayList<Pawn>> pawns = new ArrayList<ArrayList<Pawn>>(
+				Arrays.asList(redPawns, bluePawns, yellowPawns, greenPawns));
+
+		// And homeFields
+		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
+
+		// Loop through the four players.
+		for (int i = 0; i < 4; i++) {
+			// Do we need the next player to be a human?
+			if (numberOfHumans > i) {
+				players.add(new Player(new HumanStrategy(), goalFields.get(i),
+						homeFields[i], pawns.get(i)));
+			} else {
+				// Choose an AI strategy.
+				int choice = (int) (1 + Math.random() * 4);
+				Strategy someStrategy;
+				switch (choice) {
+				case 1:
+					someStrategy = new AggressiveStrategy();
+					break;
+				case 2:
+					someStrategy = new DefensiveStrategy();
+					break;
+				case 3:
+					someStrategy = new LonePawnStrategy();
+					break;
+				case 4:
+					someStrategy = new ManyPawnsStrategy();
+					break;
+				default:
+					someStrategy = new ManyPawnsStrategy();
+					break;
+				}
+				// Create the AI.
+				players.add(new Player(someStrategy, goalFields.get(i),
+						homeFields[i], pawns.get(i)));
+			}
+		}
+		// All the players are initialized now.
 	}
 
 	/**

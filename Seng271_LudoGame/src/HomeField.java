@@ -27,6 +27,10 @@ public class HomeField extends Field {
 		return (homePawns.size() > 0);
 	}
 
+	public final int getPawnCount() {
+		return homePawns.size();
+	}
+
 	public final boolean isFull() {
 		return (homePawns.size() == 4);
 	}
@@ -40,7 +44,7 @@ public class HomeField extends Field {
 	@Override
 	public final void setPawn(final Pawn pawn) {
 		if (pawn != null) {
-			homePawns.add(pawn);
+			homePawns.add(0, pawn);
 		}
 	}
 

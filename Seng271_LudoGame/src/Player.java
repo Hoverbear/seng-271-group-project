@@ -38,20 +38,26 @@ public class Player {
 	 */
 	public final void planMove(final int dieRoll) {
 		// TODO The Strategy should take care of this
-		if (homeField.isFull() && dieRoll == 6) {
-			movePawnFromHome();
-		} else if (!homeField.isFull()) {
-			if (checkIfGoalOccupied()) {
+		if ((homeField.getPawnCount() + getGoalOccupiedCount() == 4)
+				&& dieRoll == 6) {
+			if (homeField.hasPawn()) {
+				movePawnFromHome();
+			} else {
+				System.err
+						.println("This player already won ... why must the game go on?");
+			}
+		} else if (!(homeField.getPawnCount() + getGoalOccupiedCount() == 4)) {
+			if (checkIfGoalFull()) {
 				// TODO
 			} else {
 				movePawnNormal(dieRoll);
 			}
 		}
 
-		if (checkIfGoalOccupied()) {
+		if (checkIfGoalFull()) {
 			System.out.println("This player is done!\n");
 		} else {
-			System.out.println("Turn done!\n");
+			//
 		}
 	}
 
@@ -66,10 +72,12 @@ public class Player {
 	 * Moves a pawn out of its homefield.
 	 */
 	private void movePawnFromHome() {
-		Pawn p = homeField.getPawn();
-		p.moveToField(homeField.getNextField());
-		System.out.println("Moved the pawn to "
-				+ homeField.getNextField().getPoint().toString());
+		if (checkValidMove(homeField.getNextField())) {
+			Pawn p = homeField.getPawn();
+			p.moveToField(homeField.getNextField());
+			System.out.println("Moved the pawn to "
+					+ homeField.getNextField().getPoint().toString());
+		}
 		sleep(50);
 	}
 
@@ -83,7 +91,7 @@ public class Player {
 	private void movePawnNormal(final int distance) {
 		Pawn thePawn = null;
 		for (Pawn p : pawns) {
-			if (p.getField() != homeField) {
+			if (p.isAtBasic()) {
 				thePawn = p;
 				break;
 			}
@@ -106,7 +114,7 @@ public class Player {
 	 */
 	private void movePawnSpaces(final Pawn pawn, final BasicField field,
 			final int distance) {
-		if (distance == 0) {
+		if (distance == 0 && checkValidMove(field)) {
 			pawn.moveToField(field);
 			System.out.println("Moved the pawn to "
 					+ field.getPoint().toString());
@@ -138,10 +146,14 @@ public class Player {
 	private boolean movePawnGoal(final Pawn pawn, final GoalField goal,
 			final int distance) {
 		if (distance == 0) {
-			pawn.moveToField(goal);
-			System.out.println("Moved the pawn to goal! At "
-					+ goal.getPoint().toString());
-			return true;
+			if (checkValidMove(goal)) {
+				pawn.moveToField(goal);
+				System.out.println("Moved the pawn to goal! At "
+						+ goal.getPoint().toString());
+				return true;
+			} else {
+				return false;
+			}
 		} else if (!goal.hasNextField()) {
 			System.err
 					.println("Oops, invalid move attempted! Goal runway is too short");
@@ -152,7 +164,7 @@ public class Player {
 		}
 	}
 
-	private boolean checkIfGoalFull() {
+	public boolean checkIfGoalFull() {
 		boolean isFull = true;
 		for (GoalField g : goalField) {
 			isFull &= g.hasPawn();
@@ -166,6 +178,38 @@ public class Player {
 			hasPawn |= g.hasPawn();
 		}
 		return hasPawn;
+	}
+
+	private int getGoalOccupiedCount() {
+		int numPawns = 0;
+		for (GoalField g : goalField) {
+			if (g.hasPawn()) {
+				numPawns++;
+			}
+		}
+		return numPawns;
+	}
+
+	private boolean checkValidMove(final Field field) {
+		if (field.hasPawn()) {
+			if (isOwnPawn(field.getPawn())) {
+				System.err
+						.println("Oops, invalid move attempted! Own pawn at field location");
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+
+	private boolean isOwnPawn(final Pawn foundPawn) {
+		boolean ownPawn = false;
+		for (Pawn p : pawns) {
+			ownPawn |= (p == foundPawn);
+		}
+		return ownPawn;
 	}
 
 	private void sleep(final long milli) {

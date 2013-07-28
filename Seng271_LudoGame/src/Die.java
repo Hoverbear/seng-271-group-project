@@ -38,7 +38,7 @@ public class Die {
 	 * @return A newly generated die roll.
 	 */
 	public int roll() {
-		value = (int) (1 + Math.random() * 6);
+		value = (int) Math.ceil(Math.random() * 6);
 		return value;
 	}
 }
