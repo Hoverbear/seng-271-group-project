@@ -22,7 +22,7 @@ public class MoveFirstStrategy implements Strategy {
 		// Add a new pawn.
 		else {
 			// TODO: Get this right.
-			return player.movePawnFromHome();
+			return player.getHomeField().getPawn();
 		}
 	}
 

@@ -54,17 +54,26 @@ public class Player {
 		if (dieRoll == 6 && theHome.hasPawn()) {
 			canAddNew = true;
 		}
-		// Choose a move. If it doesn't find a "opportune" move, it just picks
-		// something else.
-		Pawn move = strategy.chooseMove(canScore, canKnock, canAddNew, this);
-		// We have our chosen move, now move the pawn!
-		takeMove(move);
+
+		if (homeField.getPawnCount() != 4 || canAddNew) {
+			// Choose a move. If it doesn't find a "opportune" move, it just
+			// picks
+			// something else.
+			Pawn move = strategy
+					.chooseMove(canScore, canKnock, canAddNew, this);
+			// We have our chosen move, now move the pawn!
+			takeMove(move, dieRoll);
+		}
 		return;
 	}
 
-	private void takeMove(Pawn move) {
-		// TODO Auto-generated method stub
-
+	private void takeMove(Pawn move, int dieRoll) {
+		if (move.getField().getNextField() instanceof HomeField) {
+			move.moveToField(move.getField().getNextField());
+		} else {
+			movePawnSpaces(move, (BasicField) move.getField().getNextField(),
+					dieRoll);
+		}
 	}
 
 	private Pawn canKnock(int dieRoll) {
