@@ -347,6 +347,9 @@ public class LudoGame extends JPanel {
 
 		// And homeFields
 		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
+		JFrame frame = new JFrame("Ludo Game");
+		String[] strategies = {"Aggressive", "Cautious", "Defensive",
+				"Move Leading Pawn", "Move Trailing Pawn"};
 
 		// Loop through the four players.
 		for (int i = 0; i < 4; i++) {
@@ -356,23 +359,27 @@ public class LudoGame extends JPanel {
 						homeFields[i], pawns.get(i)));
 			} else {
 				// Choose an AI strategy.
+				String selection = (String) JOptionPane.showInputDialog(frame,
+						"Which strategy should the AI use?",
+						"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
+						strategies, strategies[0]);
 
 				// int choice = (int) (1 + Math.random() * 4);
 				// TODO change back to random after strategy implementation
-				int choice = 4; // force the MoveFirstStrategy
+				//int choice = 4; // force the MoveFirstStrategy
 
 				Strategy someStrategy;
-				switch (choice) {
-				case 1:
+				switch (selection) {
+				case "Aggressive":
 					someStrategy = new AggressiveStrategy();
 					break;
-				case 2:
+				case "Cautious":
 					someStrategy = new CautiousStrategy();
 					break;
-				case 3:
+				case "Defensive":
 					someStrategy = new DefensiveStrategy();
 					break;
-				case 4:
+				case "Move Leading Pawn":
 					someStrategy = new MoveFirstStrategy();
 					break;
 				default:
