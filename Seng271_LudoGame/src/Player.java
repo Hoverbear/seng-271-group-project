@@ -94,14 +94,19 @@ public class Player {
 	/**
 	 * Moves a pawn out of its homefield.
 	 */
-	public void movePawnFromHome() {
+	public boolean movePawnFromHome() {
+		boolean returnValue;
 		if (checkValidMove(homeField.getNextField())) {
 			Pawn p = homeField.getPawn();
 			p.moveToField(homeField.getNextField());
 			System.out.println("Moved the pawn to "
 					+ homeField.getNextField().getPoint().toString());
+			returnValue = true;
+		}else{
+			returnValue = false;
 		}
 		sleep(50);
+		return returnValue;
 	}
 
 	/**
@@ -135,24 +140,27 @@ public class Player {
 	 * @param field
 	 * @param distance
 	 */
-	public void movePawnSpaces(final Pawn pawn, final BasicField field,
+	public boolean movePawnSpaces(final Pawn pawn, final BasicField field,
 			final int distance) {
 		if (distance == 0 && checkValidMove(field)) {
 			pawn.moveToField(field);
 			System.out.println("Moved the pawn to "
 					+ field.getPoint().toString());
+			return true;
+		}else if(distance == 0 && !checkValidMove(field)){
+			return false;
 		} else {
 			if (field.hasGoalField()) {
 				if (field.getGoalField() == goalField.get(3)) {
-					movePawnGoal(pawn, goalField.get(3), distance - 1);
+					return movePawnGoal(pawn, goalField.get(3), distance - 1);
 				} else {
 					System.out
 							.println("Noticed a goal field ... failed to be interested");
-					movePawnSpaces(pawn, (BasicField) field.getNextField(),
+					return movePawnSpaces(pawn, (BasicField) field.getNextField(),
 							distance - 1);
 				}
 			} else {
-				movePawnSpaces(pawn, (BasicField) field.getNextField(),
+				return movePawnSpaces(pawn, (BasicField) field.getNextField(),
 						distance - 1);
 			}
 		}
@@ -264,7 +272,7 @@ public class Player {
 	 * @param milli
 	 *            The amount of milliseconds to sleep.
 	 */
-	private void sleep(final long milli) {
+	public void sleep(final long milli) {
 		try {
 			Thread.sleep(milli);
 		} catch (InterruptedException ie) {
