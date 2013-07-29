@@ -51,7 +51,8 @@ public class Player {
 											// to represent a move or not.
 		Pawn canKnock = canKnock(dieRoll);
 		boolean canAddNew = false;
-		if (dieRoll == 6 && theHome.hasPawn()) {
+		if (dieRoll == 6 && theHome.hasPawn()
+				&& !theHome.getNextField().hasPawn()) {
 			canAddNew = true;
 		}
 
