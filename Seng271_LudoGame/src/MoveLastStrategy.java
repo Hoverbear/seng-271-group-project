@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /** 
  *
  */
@@ -15,8 +17,23 @@ public class MoveLastStrategy implements Strategy {
 		// Normal Move.
 		else if (!(canAddNew && player.getHomeField().getPawnCount()
 				+ player.getGoalOccupiedCount() == 4)) {
-			return player.getPawns().get(0);
-			// TODO: Select the last pawn.
+			HomeField home = player.getHomeField();
+			Field field = home;
+			ArrayList<Pawn> pawns = player.getPawns();
+			Pawn chosen = null;
+
+			// Loop around the board until we find the first pawn of the player.
+			// TODO: Does this fail if there are no pawns on the board?
+			while (field.getNextField() != home && chosen == null) {
+				if (field.hasPawn()) {
+					Pawn thePawn = field.getPawn();
+					if (pawns.contains(thePawn)) {
+						chosen = thePawn;
+					}
+				}
+			}
+
+			return chosen;
 		}
 		// Add a new pawn.
 		else {
@@ -24,5 +41,4 @@ public class MoveLastStrategy implements Strategy {
 			return player.getHomeField().getPawn();
 		}
 	}
-
 }
