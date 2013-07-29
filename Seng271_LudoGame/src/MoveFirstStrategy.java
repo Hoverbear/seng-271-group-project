@@ -15,13 +15,12 @@ public class MoveFirstStrategy implements Strategy {
 		// Normal Move.
 		else if (!(canAddNew && player.getHomeField().getPawnCount()
 				+ player.getGoalOccupiedCount() == 4)) {
-			// Get a pawn from the home field and move it!
 			return player.getPawns().get(0);
 			// TODO: Select one intelligently.
 		}
 		// Add a new pawn.
 		else {
-			// TODO: Get this right.
+			// TODO: Select the farthest along pawn.
 			return player.getHomeField().getPawn();
 		}
 	}

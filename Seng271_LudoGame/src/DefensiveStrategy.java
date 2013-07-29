@@ -2,6 +2,7 @@
  *
  */
 public class DefensiveStrategy implements Strategy {
+	// TODO: This strategy.
 	public Pawn chooseMove(Pawn canScore, Pawn canKnock, boolean canAddNew,
 			Player player) {
 		// Get in goal

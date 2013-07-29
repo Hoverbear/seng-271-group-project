@@ -4,13 +4,13 @@
 public class AggressiveStrategy implements Strategy {
 	public Pawn chooseMove(Pawn canScore, Pawn canKnock, boolean canAddNew,
 			Player player) {
-		// Get in goal
-		if (canScore != null) {
-			return canScore;
-		}
 		// Knock someone out.
-		else if (canKnock != null) {
+		if (canKnock != null) {
 			return canKnock;
+		}
+		// Get in goal
+		else if (canScore != null) {
+			return canScore;
 		}
 		// Move a new pawn on
 		else if (canAddNew

@@ -15,9 +15,8 @@ public class MoveLastStrategy implements Strategy {
 		// Normal Move.
 		else if (!(canAddNew && player.getHomeField().getPawnCount()
 				+ player.getGoalOccupiedCount() == 4)) {
-			// Get a pawn from the home field and move it!
 			return player.getPawns().get(0);
-			// TODO: Select one intelligently.
+			// TODO: Select the last pawn.
 		}
 		// Add a new pawn.
 		else {
