@@ -15,7 +15,7 @@ public class LonePawnStrategy implements Strategy {
 	 * @see Strategy#doMove()
 	 */
 	@Override
-	public void doMove(final Player player, final int dieRoll) {
+	public Pawn doMove(final Player player, final int dieRoll) {
 		theHome = player.getHomeField();
 		theGoal = player.getEntryGoalField();
 		thePawns = player.getPawns();
@@ -48,5 +48,7 @@ public class LonePawnStrategy implements Strategy {
 		} else {
 			// TODO: Please fill this out!
 		}
+
+		return null;
 	}
 }

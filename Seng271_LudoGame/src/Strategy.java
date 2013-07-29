@@ -10,5 +10,5 @@ public interface Strategy {
 	 *            move.
 	 * @return The Pawn to move
 	 */
-	public void doMove(final Player player, final int dieRoll);
+	public Pawn doMove(final Player player, final int dieRoll);
 }
