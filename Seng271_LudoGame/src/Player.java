@@ -41,6 +41,11 @@ public class Player {
 		if (getGoalOccupiedCount() == 4) {
 			return;
 		}
+		// Players with no pawns on the field and no '6' dieroll don't take
+		// their turn.
+		else if (homeField.isFull() && dieRoll != 6) {
+			return;
+		}
 
 		// Locational variables. - TODO: THESE SHOULD ALREADY BE AVAILABLE
 		HomeField theHome = getHomeField();
@@ -58,8 +63,7 @@ public class Player {
 
 		if (homeField.getPawnCount() != 4 || canAddNew) {
 			// Choose a move. If it doesn't find a "opportune" move, it just
-			// picks
-			// something else.
+			// picks something else.
 			Pawn move = strategy
 					.chooseMove(canScore, canKnock, canAddNew, this);
 			// We have our chosen move, now move the pawn!
@@ -77,11 +81,13 @@ public class Player {
 	 */
 	private void takeMove(Pawn move, int dieRoll) {
 		// If we just moved someone to the home field.
-		if (move.getField() == getHomeField().getNextField() && dieRoll == 6) {
-			return;
+		if (move.getField() == getHomeField() && dieRoll == 6) {
+			movePawnFromHome();
 			// If not, then we're actually moving.
 		} else {
-			movePawnSpaces(move, (BasicField) move.getField(), dieRoll);
+			dieRoll--;
+			movePawnSpaces(move, (BasicField) move.getField().getNextField(),
+					dieRoll);
 		}
 	}
 

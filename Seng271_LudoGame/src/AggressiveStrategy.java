@@ -17,7 +17,7 @@ public class AggressiveStrategy implements Strategy {
 				&& player.getHomeField().getPawnCount()
 						+ player.getGoalOccupiedCount() == 4) {
 			// Get a pawn from the home field and move it!
-			return player.movePawnFromHome();
+			return player.getHomeField().getPawn();
 			// TODO: Figure out how to do this right.
 		}
 		// Normal move
