@@ -359,7 +359,7 @@ public class LudoGame extends JPanel {
 
 				// int choice = (int) (1 + Math.random() * 4);
 				// TODO change back to random after strategy implementation
-				int choice = 3; // force the LonePawnStrategy
+				int choice = 4; // force the MoveFirstStrategy
 
 				Strategy someStrategy;
 				switch (choice) {
@@ -367,16 +367,16 @@ public class LudoGame extends JPanel {
 					someStrategy = new AggressiveStrategy();
 					break;
 				case 2:
-					someStrategy = new DefensiveStrategy();
+					someStrategy = new CautiousStrategy();
 					break;
 				case 3:
-					someStrategy = new MoveFirstStrategy();
+					someStrategy = new DefensiveStrategy();
 					break;
 				case 4:
-					someStrategy = new CautiousStrategy();
+					someStrategy = new MoveFirstStrategy();
 					break;
 				default:
-					someStrategy = new CautiousStrategy();
+					someStrategy = new MoveLastStrategy();
 					break;
 				}
 				// Create the AI.
