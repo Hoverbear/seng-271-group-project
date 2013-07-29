@@ -45,7 +45,7 @@ public class MoveFirstStrategy implements Strategy {
 		}
 		// Add a new pawn.
 		else {
-			// TODO: Select the farthest along pawn.
+			// TODO: Add a new pawn.
 			return player.getHomeField().getPawn();
 		}
 	}

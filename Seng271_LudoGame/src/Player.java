@@ -68,12 +68,20 @@ public class Player {
 		return;
 	}
 
+	/**
+	 * 
+	 * @param move
+	 *            The pawn which the player wants to move.
+	 * @param dieRoll
+	 *            The number of spots to move!
+	 */
 	private void takeMove(Pawn move, int dieRoll) {
-		if (move.getField().getNextField() instanceof HomeField) {
-			move.moveToField(move.getField().getNextField());
+		// If we just moved someone to the home field.
+		if (move.getField() == getHomeField().getNextField() && dieRoll == 6) {
+			return;
+			// If not, then we're actually moving.
 		} else {
-			movePawnSpaces(move, (BasicField) move.getField().getNextField(),
-					dieRoll);
+			movePawnSpaces(move, (BasicField) move.getField(), dieRoll);
 		}
 	}
 
