@@ -1,7 +1,7 @@
 /** 
  *
  */
-public class DefensiveStrategy implements Strategy {
+public class MoveLastStrategy implements Strategy {
 	public Pawn chooseMove(Pawn canScore, Pawn canKnock, boolean canAddNew,
 			Player player) {
 		// Get in goal

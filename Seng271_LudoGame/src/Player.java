@@ -37,8 +37,44 @@ public class Player {
 	 * Calls on the strategy to perform a move.
 	 */
 	public final void doMove(final int dieRoll) {
-		// testMove(dieRoll);
-		strategy.doMove(this, dieRoll);
+		// Won players skip their turn.
+		if (getGoalOccupiedCount() == 4) {
+			return;
+		}
+
+		// Locational variables. - TODO: THESE SHOULD ALREADY BE AVAILABLE
+		HomeField theHome = getHomeField();
+		GoalField theGoal = getEntryGoalField();
+		ArrayList<Pawn> thePawns = getPawns();
+		// Opportune move possibilities.
+		Pawn canScore = canScore(dieRoll); // Store a pawn or null in each, as
+											// to represent a move or not.
+		Pawn canKnock = canKnock(dieRoll);
+		boolean canAddNew = false;
+		if (dieRoll == 6 && theHome.hasPawn()) {
+			canAddNew = true;
+		}
+		// Choose a move. If it doesn't find a "opportune" move, it just picks
+		// something else.
+		Pawn move = strategy.chooseMove(canScore, canKnock, canAddNew, this);
+		// We have our chosen move, now move the pawn!
+		takeMove(move);
+		return;
+	}
+
+	private void takeMove(Pawn move) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private Pawn canKnock(int dieRoll) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Pawn canScore(int dieRoll) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*
@@ -94,14 +130,17 @@ public class Player {
 	/**
 	 * Moves a pawn out of its homefield.
 	 */
-	public void movePawnFromHome() {
+	public Pawn movePawnFromHome() {
 		if (checkValidMove(homeField.getNextField())) {
 			Pawn p = homeField.getPawn();
 			p.moveToField(homeField.getNextField());
 			System.out.println("Moved the pawn to "
 					+ homeField.getNextField().getPoint().toString());
+			sleep(50);
+			return p;
 		}
 		sleep(50);
+		return null;
 	}
 
 	/**

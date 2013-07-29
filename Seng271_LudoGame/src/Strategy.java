@@ -1,14 +1,5 @@
-public interface Strategy {
 
-	/**
-	 * 
-	 * @param player
-	 *            The Player the strategy belongs to. For determining the Pawns
-	 *            and associated Fields to decide a move.
-	 * @param dieRoll
-	 *            The die roll, so the strategy can determine the appropriate
-	 *            move.
-	 * @return The Pawn to move
-	 */
-	public Pawn doMove(final Player player, final int dieRoll);
+public interface Strategy {
+	public Pawn chooseMove(Pawn canScore, Pawn canKnock, boolean canAddNew,
+			Player player);
 }

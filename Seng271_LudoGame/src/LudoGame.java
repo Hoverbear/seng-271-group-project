@@ -370,13 +370,13 @@ public class LudoGame extends JPanel {
 					someStrategy = new DefensiveStrategy();
 					break;
 				case 3:
-					someStrategy = new LonePawnStrategy();
+					someStrategy = new MoveFirstStrategy();
 					break;
 				case 4:
-					someStrategy = new ManyPawnsStrategy();
+					someStrategy = new CautiousStrategy();
 					break;
 				default:
-					someStrategy = new ManyPawnsStrategy();
+					someStrategy = new CautiousStrategy();
 					break;
 				}
 				// Create the AI.
