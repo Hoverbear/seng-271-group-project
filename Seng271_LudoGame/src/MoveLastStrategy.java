@@ -22,7 +22,8 @@ public class MoveLastStrategy implements Strategy {
 			ArrayList<Pawn> pawns = player.getPawns();
 			Pawn chosen = null;
 
-			// Loop around the board until we find the first pawn of the player.
+			// Loop around the board until we find the pawn shortest distance
+			// from home.
 			// TODO: Does this fail if there are no pawns on the board?
 			while (field.getNextField() != home && chosen == null) {
 				if (field.hasPawn()) {
