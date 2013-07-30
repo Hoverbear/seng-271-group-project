@@ -65,4 +65,5 @@ public class ManyPawnsStrategy implements Strategy {
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);
 	}
+
 }
