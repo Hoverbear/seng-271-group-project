@@ -50,32 +50,13 @@ public class Player {
 	 * Calls on the strategy to perform a move.
 	 */
 	public final void doMove(final int dieRoll) {
-		// testMove(dieRoll);
-		// strategy.doMove(this, dieRoll);
-
-		// -----------------------------------------------//
 		strategy.chooseMove(this, dieRoll);
-		// if (theMove != null) {
-		// takeMove(theMove, dieRoll);
-		// }
-		// Players with all pawns in homeField are done planning
-		// if (homeField.isFull()) {
-		// if (dieRoll == 6) {
-		// takeMove(null, dieRoll);
-		// } else {
-		// System.out.println("No valid moves for player");
-		// }
-		// return;
-		// }
-
-		// strategy
 	}
 
-	public void takeMove(final Move move, final int dieRoll) {
+	public void takeMove(final Move move) {
 		if (move != null) {
 			Pawn p = move.getPawn();
 			Field f = move.getField();
-			int d = dieRoll;
 
 			while (move.getField() != f) {
 				if (f.getClass() == BasicField.class) {
@@ -95,30 +76,6 @@ public class Player {
 			p.moveToField(f);
 		}
 		SwingUtilities.invokeLater(parent.continueAfterThreadEnd);
-	}
-
-	public void takeHumanMove(final Move move) {
-		if (move != null) {
-			Pawn p = move.getPawn();
-			Field f = move.getField();
-
-			while (move.getField() != f) {
-				if (f.getClass() == BasicField.class) {
-					if (((BasicField) f).hasGoalField()) {
-						if (((BasicField) f).getGoalField() == goalField.get(3)) {
-							f = ((BasicField) f).getGoalField();
-						} else {
-							f = f.getNextField();
-						}
-					} else {
-						f = f.getNextField();
-					}
-				} else {
-					f = f.getNextField();
-				}
-			}
-			p.moveToField(f);
-		}
 	}
 
 	/**
@@ -145,19 +102,16 @@ public class Player {
 	/**
 	 * Moves a pawn out of its homefield.
 	 */
-	public boolean movePawnFromHome() {
-		boolean returnValue;
+	public Field checkMovePawnHome() {
 		if (checkValidMove(homeField.getNextField())) {
-			Pawn p = homeField.getPawn();
-			p.moveToField(homeField.getNextField());
-			System.out.println("Moved the pawn to "
-					+ homeField.getNextField().getPoint().toString());
-			returnValue = true;
+			// Pawn p = homeField.getPawn();
+			// p.moveToField(homeField.getNextField());
+			// System.out.println("Moved the pawn to "
+			// + homeField.getNextField().getPoint().toString());
+			return homeField.getNextField();
 		} else {
-			returnValue = false;
+			return null;
 		}
-		// sleep(LudoGame.SLEEP);
-		return returnValue;
 	}
 
 	/**
@@ -209,8 +163,6 @@ public class Player {
 				return null;
 			}
 		} else if (!goal.hasNextField()) {
-			System.err
-					.println("Oops, invalid move attempted! Goal runway is too short");
 			return null;
 		} else {
 			return checkMovePawnGoal(pawn, (GoalField) goal.getNextField(),

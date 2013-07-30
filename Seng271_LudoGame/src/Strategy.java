@@ -21,6 +21,5 @@ public interface Strategy {
 	 * @param dieRoll
 	 *            The die roll.
 	 */
-	public void sendMoveToPlayer(final Player player, final Move move,
-			final int dieRoll);
+	public void sendMoveToPlayer(final Player player, final Move move);
 }

@@ -4,7 +4,7 @@ import javax.swing.JLabel;
 public class Die {
 	/* This is a singleton! */
 	private static Die instance = new Die();
-	private int value;
+	private int value = 0;
 	private static JLabel imgSrc;
 
 	/**
@@ -44,6 +44,10 @@ public class Die {
 	 */
 	public int roll() {
 		value = (int) Math.ceil(Math.random() * 6);
+		return value;
+	}
+
+	public int lastRoll() {
 		return value;
 	}
 

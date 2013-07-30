@@ -48,7 +48,7 @@ public class LudoGame extends JPanel {
 	public static int SLEEP = 100;
 
 	private boolean theShowMustGoOn = true;
-	private int thePlayer = -1;
+	private int thePlayer = 0;
 
 	private final JLabel redLabel;
 	private final JLabel blueLabel;
@@ -177,11 +177,6 @@ public class LudoGame extends JPanel {
 
 	private void testGame() {
 		if (theShowMustGoOn) {
-			thePlayer++;
-			if (thePlayer > 3) {
-				thePlayer = 0;
-			}
-			// for (Player pl : players) {
 			Player pl = players.get(thePlayer);
 			System.out.println("Player " + thePlayer + " starts turn ...");
 			pl.setLabelIsTurn();
@@ -195,8 +190,10 @@ public class LudoGame extends JPanel {
 	}
 
 	protected void continueGame() {
-		if (theShowMustGoOn) {
-			sleep(SLEEP);
+		sleep(SLEEP);
+		if (theDie.lastRoll() == 6) {
+			testGame();
+		} else {
 			Player pl = players.get(thePlayer);
 			System.out.println("Turn done!\n");
 			if (pl.checkIfGoalFull()) {
@@ -207,6 +204,10 @@ public class LudoGame extends JPanel {
 			sleep(SLEEP);
 			if (theShowMustGoOn) {
 				System.out.println("Round done! Next round starting...\n");
+				thePlayer++;
+				if (thePlayer > 3) {
+					thePlayer = 0;
+				}
 				testGame();
 			}
 		}
@@ -395,7 +396,7 @@ public class LudoGame extends JPanel {
 
 				// int choice = (int) (1 + Math.random() * 4);
 				// TODO change back to random after strategy implementation
-				int choice = 3; // force the LonePawnStrategy
+				int choice = 4; // force the LonePawnStrategy
 
 				Strategy someStrategy;
 				switch (choice) {
@@ -409,8 +410,6 @@ public class LudoGame extends JPanel {
 					someStrategy = new LonePawnStrategy();
 					break;
 				case 4:
-					someStrategy = new ManyPawnsStrategy();
-					break;
 				default:
 					someStrategy = new ManyPawnsStrategy();
 					break;

@@ -14,8 +14,7 @@ public class DefensiveStrategy implements Strategy {
 	}
 
 	@Override
-	public void sendMoveToPlayer(final Player player, final Move move,
-			final int dieRoll) {
+	public void sendMoveToPlayer(final Player player, final Move move) {
 		// TODO Auto-generated method stub
 
 	}

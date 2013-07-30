@@ -7,8 +7,6 @@ import java.util.ArrayList;
  */
 public class HumanStrategy implements Strategy, MouseListener {
 
-	private boolean waiting = true;
-	private Pawn movePawn = null;
 	private Player thePlayer = null;
 	private int theRoll = 0;
 	private ArrayList<Pawn> validPawns;
@@ -84,7 +82,7 @@ public class HumanStrategy implements Strategy, MouseListener {
 						thePlayer.getHomeField().getPawn();
 					}
 					sendMoveToPlayer(thePlayer,
-							validMoves.get(validPawns.indexOf(p)), theRoll);
+							validMoves.get(validPawns.indexOf(p)));
 					// Take down the listeners.
 					for (Pawn q : thePlayer.getPawns()) {
 						while (q.getImgSrc().getMouseListeners().length > 0) {
@@ -98,7 +96,7 @@ public class HumanStrategy implements Strategy, MouseListener {
 
 			if (validMoves.size() < 1) {
 				System.err.println("No valid moves exist!");
-				sendMoveToPlayer(thePlayer, null, theRoll);
+				sendMoveToPlayer(thePlayer, null);
 				for (Pawn q : thePlayer.getPawns()) {
 					while (q.getImgSrc().getMouseListeners().length > 0) {
 						q.getImgSrc().removeMouseListener(
@@ -114,8 +112,7 @@ public class HumanStrategy implements Strategy, MouseListener {
 	}
 
 	@Override
-	public void sendMoveToPlayer(final Player player, final Move move,
-			final int dieRoll) {
-		player.takeMove(move, dieRoll);
+	public void sendMoveToPlayer(final Player player, final Move move) {
+		player.takeMove(move);
 	}
 }
