@@ -1,4 +1,9 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
+
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /* 
  * 
@@ -7,6 +12,8 @@ public class Player {
 	private final Strategy strategy;
 	private final ArrayList<GoalField> goalField;
 	private final HomeField homeField;
+	private final JLabel playLabel;
+	private final LudoGame parent;
 	// Should be a set of 4.
 	private final ArrayList<Pawn> pawns;
 
@@ -20,17 +27,23 @@ public class Player {
 	 * @param homeField
 	 *            The player's home field. This should be determined by the game
 	 *            itself.
+	 * @param playLabel
+	 *            The player's label, for showing in the GUI whose turn it is.
 	 * @param pawns
 	 *            The set of the players pawns. These should be created by the
 	 *            Ludo game initialization.
 	 */
 	public Player(final Strategy strategy,
 			final ArrayList<GoalField> goalField, final HomeField homeField,
-			final ArrayList<Pawn> pawns) {
+			final JLabel playLabel, final ArrayList<Pawn> pawns,
+			final LudoGame parent) {
 		this.strategy = strategy;
 		this.goalField = goalField;
 		this.homeField = homeField;
+		this.playLabel = playLabel;
+		this.playLabel.setFont(new Font("Sans-Serif", Font.BOLD, 26));
 		this.pawns = pawns;
+		this.parent = parent;
 	}
 
 	/**
@@ -38,7 +51,76 @@ public class Player {
 	 */
 	public final void doMove(final int dieRoll) {
 		// testMove(dieRoll);
-		strategy.doMove(this, dieRoll);
+		// strategy.doMove(this, dieRoll);
+
+		// -----------------------------------------------//
+		if (parent.theShowMustGoOn) {
+			strategy.chooseMove(this, dieRoll);
+		}
+		// if (theMove != null) {
+		// takeMove(theMove, dieRoll);
+		// }
+		// Players with all pawns in homeField are done planning
+		// if (homeField.isFull()) {
+		// if (dieRoll == 6) {
+		// takeMove(null, dieRoll);
+		// } else {
+		// System.out.println("No valid moves for player");
+		// }
+		// return;
+		// }
+
+		// strategy
+	}
+
+	public void takeMove(final Move move, final int dieRoll) {
+		if (move != null) {
+			Pawn p = move.getPawn();
+			Field f = move.getField();
+			int d = dieRoll;
+
+			while (move.getField() != f) {
+				if (f.getClass() == BasicField.class) {
+					if (((BasicField) f).hasGoalField()) {
+						if (((BasicField) f).getGoalField() == goalField.get(3)) {
+							f = ((BasicField) f).getGoalField();
+						} else {
+							f = f.getNextField();
+						}
+					} else {
+						f = f.getNextField();
+					}
+				} else {
+					f = f.getNextField();
+				}
+			}
+			p.moveToField(f);
+		}
+		SwingUtilities.invokeLater(parent.continueAfterThreadEnd);
+	}
+
+	public void takeHumanMove(final Move move) {
+		if (move != null) {
+			Pawn p = move.getPawn();
+			Field f = move.getField();
+
+			while (move.getField() != f) {
+				if (f.getClass() == BasicField.class) {
+					if (((BasicField) f).hasGoalField()) {
+						if (((BasicField) f).getGoalField() == goalField.get(3)) {
+							f = ((BasicField) f).getGoalField();
+						} else {
+							f = f.getNextField();
+						}
+					} else {
+						f = f.getNextField();
+					}
+				} else {
+					f = f.getNextField();
+				}
+			}
+			p.moveToField(f);
+		}
 	}
 
 	/*
@@ -102,10 +184,10 @@ public class Player {
 			System.out.println("Moved the pawn to "
 					+ homeField.getNextField().getPoint().toString());
 			returnValue = true;
-		}else{
+		} else {
 			returnValue = false;
 		}
-		sleep(50);
+		// sleep(LudoGame.SLEEP);
 		return returnValue;
 	}
 
@@ -116,6 +198,7 @@ public class Player {
 	 * @param distance
 	 *            The distance to move
 	 */
+	@Deprecated
 	public void movePawnNormal(final int distance) {
 		Pawn thePawn = null;
 		for (Pawn p : pawns) {
@@ -129,7 +212,7 @@ public class Player {
 		} else {
 			System.err.println("Unexpected error. Missing pawn!");
 		}
-		sleep(50);
+		sleep(LudoGame.SLEEP);
 	}
 
 	/**
@@ -140,15 +223,15 @@ public class Player {
 	 * @param field
 	 * @param distance
 	 */
-	public boolean movePawnSpaces(final Pawn pawn, final BasicField field,
+	public Field movePawnSpaces(final Pawn pawn, final BasicField field,
 			final int distance) {
 		if (distance == 0 && checkValidMove(field)) {
-			pawn.moveToField(field);
-			System.out.println("Moved the pawn to "
-					+ field.getPoint().toString());
-			return true;
-		}else if(distance == 0 && !checkValidMove(field)){
-			return false;
+			// pawn.moveToField(field);
+			// System.out.println("Moved the pawn to "
+			// + field.getPoint().toString());
+			return field;
+		} else if (distance == 0 && !checkValidMove(field)) {
+			return null;
 		} else {
 			if (field.hasGoalField()) {
 				if (field.getGoalField() == goalField.get(3)) {
@@ -156,8 +239,8 @@ public class Player {
 				} else {
 					System.out
 							.println("Noticed a goal field ... failed to be interested");
-					return movePawnSpaces(pawn, (BasicField) field.getNextField(),
-							distance - 1);
+					return movePawnSpaces(pawn,
+							(BasicField) field.getNextField(), distance - 1);
 				}
 			} else {
 				return movePawnSpaces(pawn, (BasicField) field.getNextField(),
@@ -174,21 +257,21 @@ public class Player {
 	 * @param distance
 	 * @return
 	 */
-	private boolean movePawnGoal(final Pawn pawn, final GoalField goal,
+	public Field movePawnGoal(final Pawn pawn, final GoalField goal,
 			final int distance) {
 		if (distance == 0) {
 			if (checkValidMove(goal)) {
 				pawn.moveToField(goal);
 				System.out.println("Moved the pawn to goal! At "
 						+ goal.getPoint().toString());
-				return true;
+				return goal;
 			} else {
-				return false;
+				return null;
 			}
 		} else if (!goal.hasNextField()) {
 			System.err
 					.println("Oops, invalid move attempted! Goal runway is too short");
-			return false;
+			return null;
 		} else {
 			return movePawnGoal(pawn, (GoalField) goal.getNextField(),
 					distance - 1);
@@ -233,13 +316,21 @@ public class Player {
 		return numPawns;
 	}
 
+	public void setLabelNotTurn() {
+		playLabel.setForeground(new Color(0x000000));
+	}
+
+	public void setLabelIsTurn() {
+		playLabel.setForeground(new Color(0xff2222));
+	}
+
 	/**
 	 * 
 	 * @param field
 	 *            The field that the player wishes to move the pawn to.
 	 * @return True if the move is valid.
 	 */
-	private boolean checkValidMove(final Field field) {
+	public boolean checkValidMove(final Field field) {
 		if (field.hasPawn()) {
 			if (isOwnPawn(field.getPawn())) {
 				System.err
@@ -272,7 +363,7 @@ public class Player {
 	 * @param milli
 	 *            The amount of milliseconds to sleep.
 	 */
-	public void sleep(final long milli) {
+	private void sleep(final long milli) {
 		try {
 			Thread.sleep(milli);
 		} catch (InterruptedException ie) {

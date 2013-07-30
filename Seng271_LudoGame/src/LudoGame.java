@@ -45,6 +45,16 @@ public class LudoGame extends JPanel {
 	private final static int LEFT = 1, RIGHT = 8;
 	private final static int TOP = 1, BOTTOM = 8;
 
+	public static int SLEEP = 100;
+
+	public boolean theShowMustGoOn = true;
+	private int thePlayer = -1;
+
+	private final JLabel redLabel;
+	private final JLabel blueLabel;
+	private final JLabel yellowLabel;
+	private final JLabel greenLabel;
+
 	// The array lists to keep track of the pawns in the game
 	private final ArrayList<Pawn> redPawns = new ArrayList<Pawn>();
 	private final ArrayList<Pawn> bluePawns = new ArrayList<Pawn>();
@@ -68,15 +78,13 @@ public class LudoGame extends JPanel {
 
 	private final ArrayList<Player> players = new ArrayList<Player>();
 
-	// private final Strategy redStrategy;
-	// private final Strategy blueStrategy;
-	// private final Strategy greenStrategy;
-	// private final Strategy yellowStrategy;
-	//
-	// private final Player redPlayer;
-	// private final Player bluePlayer;
-	// private final Player yellowPlayer;
-	// private final Player greenPlayer;
+	public Runnable continueAfterThreadEnd = new Runnable() {
+
+		@Override
+		public void run() {
+			continueGame();
+		}
+	};
 
 	/**
 	 * Constructor for the game board. Adds layered images and game pieces.
@@ -120,6 +128,21 @@ public class LudoGame extends JPanel {
 		JPanel playersLayer = new JPanel();
 		playersLayer.setPreferredSize(new Dimension(200, 200));
 		playersLayer.setBorder(BorderFactory.createTitledBorder("Players"));
+		redLabel = new JLabel("Red Player");
+		blueLabel = new JLabel("Blue Player");
+		yellowLabel = new JLabel("Yellow Player");
+		greenLabel = new JLabel("Green Player");
+		playersLayer.setLayout(new GridBagLayout());
+
+		GridBagConstraints playGrid = new GridBagConstraints();
+		playGrid.gridy = 0;
+		playersLayer.add(redLabel, playGrid);
+		playGrid.gridy = 1;
+		playersLayer.add(blueLabel, playGrid);
+		playGrid.gridy = 2;
+		playersLayer.add(yellowLabel, playGrid);
+		playGrid.gridy = 3;
+		playersLayer.add(greenLabel, playGrid);
 
 		GridBagConstraints theGrid = new GridBagConstraints();
 		theGrid.gridy = 0;
@@ -129,12 +152,12 @@ public class LudoGame extends JPanel {
 
 		setupTheFields();
 
-		setupThePlayers(numberOfHumans);
-
 		addPawns(redPawnImg, redPawns, redHome);
 		addPawns(bluePawnImg, bluePawns, blueHome);
 		addPawns(yellowPawnImg, yellowPawns, yellowHome);
 		addPawns(greenPawnImg, greenPawns, greenHome);
+
+		setupThePlayers(numberOfHumans);
 
 		// Get an instance of the singleton Die.
 		theDie = Die.getInstance(die);
@@ -154,27 +177,52 @@ public class LudoGame extends JPanel {
 	}
 
 	private void testGame() {
-		boolean theShowMustGoOn = true;
-		while (theShowMustGoOn) {
-			for (Player pl : players) {
-				System.out.println("Player " + players.indexOf(pl)
-						+ " starts turn ...");
-				int roll = 0;
-				do {
-					roll = rollDie();
-					pl.doMove(roll);
-					sleep(100);
-				} while (roll == 6);
-				System.out.println("Turn done!\n");
-				if (pl.checkIfGoalFull()) {
-					System.err.println("We have a winner!!!");
-					theShowMustGoOn = false;
-					break;
-				}
-				sleep(100);
+		if (theShowMustGoOn) {
+			thePlayer++;
+			if (thePlayer > 3) {
+				thePlayer = 0;
 			}
+			// for (Player pl : players) {
+			Player pl = players.get(thePlayer);
+			System.out.println("Player " + thePlayer + " starts turn ...");
+			pl.setLabelIsTurn();
+			// int roll
+			// = 0;
+			// do {
+			int roll = rollDie();
+			sleep(SLEEP);
+			pl.doMove(roll);
+			// } while (roll == 6);
+
+			// System.out.println("Turn done!\n");
+			// if (pl.checkIfGoalFull()) {
+			// System.err.println("We have a winner!!!");
+			// theShowMustGoOn = false;
+			// break;
+			// }
+			// pl.setLabelNotTurn();
+			// sleep(SLEEP);
+			// }
+			// if (theShowMustGoOn) {
+			// System.out.println("Round done! Next round starting...\n");
+			// }
+		}
+	}
+
+	protected void continueGame() {
+		if (theShowMustGoOn) {
+			sleep(SLEEP);
+			Player pl = players.get(thePlayer);
+			System.out.println("Turn done!\n");
+			if (pl.checkIfGoalFull()) {
+				System.err.println("We have a winner!!!");
+				theShowMustGoOn = false;
+			}
+			pl.setLabelNotTurn();
+			sleep(SLEEP);
 			if (theShowMustGoOn) {
 				System.out.println("Round done! Next round starting...\n");
+				testGame();
 			}
 		}
 	}
@@ -187,7 +235,7 @@ public class LudoGame extends JPanel {
 		int playerRoll = theDie.roll();
 		System.out.println("Roll: " + playerRoll);
 		theDie.setImage(createImageIcon("src/die_" + playerRoll + ".jpg"));
-		sleep(500); // This simulates being held in suspense.
+		sleep(SLEEP * 2); // This simulates being held in suspense.
 		return playerRoll;
 	}
 
@@ -348,12 +396,15 @@ public class LudoGame extends JPanel {
 		// And homeFields
 		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
 
+		// And player labels
+		JLabel[] playerLabels = { redLabel, blueLabel, yellowLabel, greenLabel };
+
 		// Loop through the four players.
 		for (int i = 0; i < 4; i++) {
 			// Do we need the next player to be a human?
 			if (numberOfHumans > i) {
 				players.add(new Player(new HumanStrategy(), goalFields.get(i),
-						homeFields[i], pawns.get(i)));
+						homeFields[i], playerLabels[i], pawns.get(i), this));
 			} else {
 				// Choose an AI strategy.
 
@@ -381,7 +432,7 @@ public class LudoGame extends JPanel {
 				}
 				// Create the AI.
 				players.add(new Player(someStrategy, goalFields.get(i),
-						homeFields[i], pawns.get(i)));
+						homeFields[i], playerLabels[i], pawns.get(i), this));
 			}
 		}
 		// All the players are initialized now.
