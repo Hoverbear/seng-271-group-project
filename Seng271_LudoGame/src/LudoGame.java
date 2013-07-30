@@ -84,7 +84,7 @@ public class LudoGame extends JPanel {
 	 * @param numberOfHumans
 	 *            The number of humans to be playing the game.
 	 */
-	private LudoGame(int numberOfHumans) {
+	private LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
 		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
@@ -129,7 +129,7 @@ public class LudoGame extends JPanel {
 
 		setupTheFields();
 
-		setupThePlayers(numberOfHumans);
+		setupThePlayers();
 
 		addPawns(redPawnImg, redPawns, redHome);
 		addPawns(bluePawnImg, bluePawns, blueHome);
@@ -335,7 +335,7 @@ public class LudoGame extends JPanel {
 	 *            The number of human players we will be seeing. The rest of the
 	 *            players will be randomly assigned a strategy.
 	 */
-	private void setupThePlayers(int numberOfHumans) {
+	private void setupThePlayers() {
 
 		// Set up the GoalFields in order
 		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
@@ -348,48 +348,44 @@ public class LudoGame extends JPanel {
 		// And homeFields
 		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
 		JFrame frame = new JFrame("Ludo Game");
-		String[] strategies = {"Aggressive", "Cautious", "Defensive",
-				"Move Leading Pawn", "Move Trailing Pawn"};
+		String[] strategies = { "Aggressive", "Cautious", "Defensive",
+				"Move Leading Pawn", "Move Trailing Pawn", "Human Player" };
 
 		// Loop through the four players.
 		for (int i = 0; i < 4; i++) {
-			// Do we need the next player to be a human?
-			if (numberOfHumans > i) {
-				players.add(new Player(new HumanStrategy(), goalFields.get(i),
-						homeFields[i], pawns.get(i)));
-			} else {
-				// Choose an AI strategy.
-				String selection = (String) JOptionPane.showInputDialog(frame,
-						"Which strategy should the AI use?",
-						"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
-						strategies, strategies[0]);
+			// Choose a strategy, human or AI.
+			String selection = (String) JOptionPane.showInputDialog(frame,
+					"Which strategy should the AI use?",
+					"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
+					strategies, strategies[0]);
 
-				// int choice = (int) (1 + Math.random() * 4);
-				// TODO change back to random after strategy implementation
-				//int choice = 4; // force the MoveFirstStrategy
+			// int choice = (int) (1 + Math.random() * 4);
+			// TODO change back to random after strategy implementation
+			// int choice = 4; // force the MoveFirstStrategy
 
-				Strategy someStrategy;
-				switch (selection) {
-				case "Aggressive":
-					someStrategy = new AggressiveStrategy();
-					break;
-				case "Cautious":
-					someStrategy = new CautiousStrategy();
-					break;
-				case "Defensive":
-					someStrategy = new DefensiveStrategy();
-					break;
-				case "Move Leading Pawn":
-					someStrategy = new MoveFirstStrategy();
-					break;
-				default:
-					someStrategy = new MoveLastStrategy();
-					break;
-				}
-				// Create the AI.
-				players.add(new Player(someStrategy, goalFields.get(i),
-						homeFields[i], pawns.get(i)));
+			Strategy someStrategy;
+			switch (selection) {
+			case "Aggressive":
+				someStrategy = new AggressiveStrategy();
+				break;
+			case "Cautious":
+				someStrategy = new CautiousStrategy();
+				break;
+			case "Defensive":
+				someStrategy = new DefensiveStrategy();
+				break;
+			case "Move Leading Pawn":
+				someStrategy = new MoveFirstStrategy();
+				break;
+			case "Human Player":
+				someStrategy = new HumanStrategy();
+			default:
+				someStrategy = new MoveLastStrategy();
+				break;
 			}
+			// Create the AI.
+			players.add(new Player(someStrategy, goalFields.get(i),
+					homeFields[i], pawns.get(i)));
 		}
 		// All the players are initialized now.
 	}
@@ -450,14 +446,7 @@ public class LudoGame extends JPanel {
 		JFrame frame = new JFrame("Ludo Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Prompt for players
-		Integer[] possibilities = { 0, 1, 2, 3, 4 };
-		int numberOfHumans = (int) JOptionPane.showInputDialog(frame,
-				"How many humans will be attempting to out-Ludo the computer?",
-				"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
-				possibilities, possibilities[0]);
-
-		LudoGame contentPane = new LudoGame(numberOfHumans);
+		LudoGame contentPane = new LudoGame();
 		contentPane.setOpaque(true);
 		frame.setContentPane(contentPane);
 
