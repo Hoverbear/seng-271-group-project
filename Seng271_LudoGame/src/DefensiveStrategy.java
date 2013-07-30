@@ -1,3 +1,4 @@
+
 /** 
  *
  */
@@ -18,5 +19,4 @@ public class DefensiveStrategy implements Strategy {
 		// TODO Auto-generated method stub
 
 	}
-
 }

@@ -14,7 +14,7 @@ public class ManyPawnsStrategy implements Strategy {
 	 * @see Strategy#doMove()
 	 */
 	@Override
-	public void chooseMove(Player player, int dieRoll) {
+	public void chooseMove(final Player player, final int dieRoll) {
 		theHome = player.getHomeField();
 		thePawns = player.getPawns();
 
@@ -57,29 +57,8 @@ public class ManyPawnsStrategy implements Strategy {
 			}
 		}
 
+		// If the player has no moves, he passes.
 		sendMoveToPlayer(player, null);
-		// Field f = theHome.getNextField();
-		// for (int i = 0; i < 4; i++) {
-		// while (!FieldHasPlayerPawn(f)) {
-		// f = f.getNextField();
-		// }
-		// f will now contain the rearmost player Pawn
-		// if (player.movePawnSpaces(f.getPawn(), (BasicField) f, dieRoll))
-		// {
-		// break;
-		// }
-		// }
-		// Print some message saying there is no legal move
-	}
-
-	private boolean FieldHasPlayerPawn(Field f) {
-		Pawn p = f.getPawn();
-		for (int i = 0; i < 4; i++) {
-			if (thePawns.get(i) == p) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

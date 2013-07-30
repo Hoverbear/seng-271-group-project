@@ -45,7 +45,7 @@ public class LudoGame extends JPanel {
 	private final static int LEFT = 1, RIGHT = 8;
 	private final static int TOP = 1, BOTTOM = 8;
 
-	public static int SLEEP = 100;
+	public static int SLEEP = 200;
 
 	private boolean theShowMustGoOn = true;
 	private int thePlayer = 0;
@@ -396,7 +396,7 @@ public class LudoGame extends JPanel {
 
 				// int choice = (int) (1 + Math.random() * 4);
 				// TODO change back to random after strategy implementation
-				int choice = 4; // force the LonePawnStrategy
+				int choice = 1; // force the LonePawnStrategy
 
 				Strategy someStrategy;
 				switch (choice) {

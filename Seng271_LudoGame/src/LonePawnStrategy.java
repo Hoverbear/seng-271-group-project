@@ -88,14 +88,8 @@ public class LonePawnStrategy implements Strategy {
 			return;
 		}
 
-		// If they win
-		if (player.checkIfGoalFull()) {
-			System.out.println("This player is done!\n");
-		}
-
-		// If the player has no pawns to play, and doesn't have a 6, he passes.
+		// If the player has no moves, he passes.
 		sendMoveToPlayer(player, null);
-		return;
 	}
 
 	@Override
