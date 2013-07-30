@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -336,56 +337,64 @@ public class LudoGame extends JPanel {
 	 *            players will be randomly assigned a strategy.
 	 */
 	private void setupThePlayers() {
-
+		// Red, Blue, Yellow, Green
+		String[] names = { "Red", "Blue", "Yellow", "Green" };
 		// Set up the GoalFields in order
 		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
 				Arrays.asList(redGoal, blueGoal, yellowGoal, greenGoal));
-
 		// Same deal with Pawn lists
 		ArrayList<ArrayList<Pawn>> pawns = new ArrayList<ArrayList<Pawn>>(
 				Arrays.asList(redPawns, bluePawns, yellowPawns, greenPawns));
-
 		// And homeFields
 		HomeField[] homeFields = { redHome, blueHome, yellowHome, greenHome };
 		JFrame frame = new JFrame("Ludo Game");
+
+		// Possible Strategies
 		String[] strategies = { "Aggressive", "Cautious", "Defensive",
 				"Move Leading Pawn", "Move Trailing Pawn", "Human Player" };
+		// Player Choices of Strategies
+		JComboBox[] choices = { new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies) };
 
-		// Loop through the four players.
+		// Prompt panel
+		JPanel prompt = new JPanel();
 		for (int i = 0; i < 4; i++) {
-			// Choose a strategy, human or AI.
-			String selection = (String) JOptionPane.showInputDialog(frame,
-					"Which strategy should the AI use?",
-					"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
-					strategies, strategies[0]);
-
-			// int choice = (int) (1 + Math.random() * 4);
-			// TODO change back to random after strategy implementation
-			// int choice = 4; // force the MoveFirstStrategy
-
-			Strategy someStrategy;
-			switch (selection) {
-			case "Aggressive":
-				someStrategy = new AggressiveStrategy();
-				break;
-			case "Cautious":
-				someStrategy = new CautiousStrategy();
-				break;
-			case "Defensive":
-				someStrategy = new DefensiveStrategy();
-				break;
-			case "Move Leading Pawn":
-				someStrategy = new MoveFirstStrategy();
-				break;
-			case "Human Player":
-				someStrategy = new HumanStrategy();
-			default:
-				someStrategy = new MoveLastStrategy();
-				break;
+			prompt.add(new JLabel(names[i]));
+			prompt.add(choices[i]);
+		}
+		int result = JOptionPane.showConfirmDialog(null, prompt,
+				"Please designate the players", JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
+			// Loop through the four players.
+			for (int i = 0; i < 4; i++) {
+				Strategy someStrategy;
+				switch (choices[i].getSelectedItem().toString()) {
+				case "Aggressive":
+					someStrategy = new AggressiveStrategy();
+					break;
+				case "Cautious":
+					someStrategy = new CautiousStrategy();
+					break;
+				case "Defensive":
+					someStrategy = new DefensiveStrategy();
+					break;
+				case "Move Leading Pawn":
+					someStrategy = new MoveFirstStrategy();
+					break;
+				case "Human Player":
+					someStrategy = new HumanStrategy();
+				default:
+					someStrategy = new MoveLastStrategy();
+					break;
+				}
+				// Create the AI.
+				players.add(new Player(someStrategy, goalFields.get(i),
+						homeFields[i], pawns.get(i)));
 			}
-			// Create the AI.
-			players.add(new Player(someStrategy, goalFields.get(i),
-					homeFields[i], pawns.get(i)));
+		} else {
+			System.exit(1);
 		}
 		// All the players are initialized now.
 	}
