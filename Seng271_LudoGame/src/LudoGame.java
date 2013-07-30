@@ -47,7 +47,7 @@ public class LudoGame extends JPanel {
 
 	public static int SLEEP = 100;
 
-	public boolean theShowMustGoOn = true;
+	private boolean theShowMustGoOn = true;
 	private int thePlayer = -1;
 
 	private final JLabel redLabel;
@@ -79,7 +79,6 @@ public class LudoGame extends JPanel {
 	private final ArrayList<Player> players = new ArrayList<Player>();
 
 	public Runnable continueAfterThreadEnd = new Runnable() {
-
 		@Override
 		public void run() {
 			continueGame();
@@ -192,20 +191,6 @@ public class LudoGame extends JPanel {
 			int roll = rollDie();
 			sleep(SLEEP);
 			pl.doMove(roll);
-			// } while (roll == 6);
-
-			// System.out.println("Turn done!\n");
-			// if (pl.checkIfGoalFull()) {
-			// System.err.println("We have a winner!!!");
-			// theShowMustGoOn = false;
-			// break;
-			// }
-			// pl.setLabelNotTurn();
-			// sleep(SLEEP);
-			// }
-			// if (theShowMustGoOn) {
-			// System.out.println("Round done! Next round starting...\n");
-			// }
 		}
 	}
 

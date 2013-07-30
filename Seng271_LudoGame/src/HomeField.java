@@ -22,6 +22,10 @@ public class HomeField extends Field {
 		return p;
 	}
 
+	public final Pawn peekAtPawn() {
+		return homePawns.get(0);
+	}
+
 	@Override
 	public final boolean hasPawn() {
 		return (homePawns.size() > 0);

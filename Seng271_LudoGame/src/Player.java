@@ -54,9 +54,7 @@ public class Player {
 		// strategy.doMove(this, dieRoll);
 
 		// -----------------------------------------------//
-		if (parent.theShowMustGoOn) {
-			strategy.chooseMove(this, dieRoll);
-		}
+		strategy.chooseMove(this, dieRoll);
 		// if (theMove != null) {
 		// takeMove(theMove, dieRoll);
 		// }
@@ -123,35 +121,6 @@ public class Player {
 		}
 	}
 
-	/*
-	 * Preserved temporarily in case needed. Will remove with next commit.
-	 * -Daniel
-	 */
-	private void testMove(final int dieRoll) {
-		// TODO The Strategy should take care of this
-		if ((homeField.getPawnCount() + getGoalOccupiedCount() == 4)
-				&& dieRoll == 6) {
-			if (homeField.hasPawn()) {
-				movePawnFromHome();
-			} else {
-				System.err
-						.println("This player already won ... why must the game go on?");
-			}
-		} else if (!(homeField.getPawnCount() + getGoalOccupiedCount() == 4)) {
-			if (checkIfGoalFull()) {
-				// TODO
-			} else {
-				movePawnNormal(dieRoll);
-			}
-		}
-
-		if (checkIfGoalFull()) {
-			System.out.println("This player is done!\n");
-		} else {
-			//
-		}
-	}
-
 	/**
 	 * 
 	 * @return The home field.
@@ -192,30 +161,6 @@ public class Player {
 	}
 
 	/**
-	 * Moves a pawn along the normal fields. First finds an available pawn, then
-	 * moves it.
-	 * 
-	 * @param distance
-	 *            The distance to move
-	 */
-	@Deprecated
-	public void movePawnNormal(final int distance) {
-		Pawn thePawn = null;
-		for (Pawn p : pawns) {
-			if (p.isAtBasic()) {
-				thePawn = p;
-				break;
-			}
-		}
-		if (thePawn != null) {
-			movePawnSpaces(thePawn, (BasicField) thePawn.getField(), distance);
-		} else {
-			System.err.println("Unexpected error. Missing pawn!");
-		}
-		sleep(LudoGame.SLEEP);
-	}
-
-	/**
 	 * Moves a pawn along the normal fields, checking for matching goal fields.
 	 * Once distance left to travel is zero, settles on field to move to.
 	 * 
@@ -223,28 +168,26 @@ public class Player {
 	 * @param field
 	 * @param distance
 	 */
-	public Field movePawnSpaces(final Pawn pawn, final BasicField field,
+	public Field checkMovePawnBasic(final Pawn pawn, final BasicField field,
 			final int distance) {
 		if (distance == 0 && checkValidMove(field)) {
-			// pawn.moveToField(field);
-			// System.out.println("Moved the pawn to "
-			// + field.getPoint().toString());
 			return field;
 		} else if (distance == 0 && !checkValidMove(field)) {
 			return null;
 		} else {
 			if (field.hasGoalField()) {
 				if (field.getGoalField() == goalField.get(3)) {
-					return movePawnGoal(pawn, goalField.get(3), distance - 1);
+					return checkMovePawnGoal(pawn, goalField.get(3),
+							distance - 1);
 				} else {
 					System.out
 							.println("Noticed a goal field ... failed to be interested");
-					return movePawnSpaces(pawn,
+					return checkMovePawnBasic(pawn,
 							(BasicField) field.getNextField(), distance - 1);
 				}
 			} else {
-				return movePawnSpaces(pawn, (BasicField) field.getNextField(),
-						distance - 1);
+				return checkMovePawnBasic(pawn,
+						(BasicField) field.getNextField(), distance - 1);
 			}
 		}
 	}
@@ -257,13 +200,10 @@ public class Player {
 	 * @param distance
 	 * @return
 	 */
-	public Field movePawnGoal(final Pawn pawn, final GoalField goal,
+	public Field checkMovePawnGoal(final Pawn pawn, final GoalField goal,
 			final int distance) {
 		if (distance == 0) {
 			if (checkValidMove(goal)) {
-				pawn.moveToField(goal);
-				System.out.println("Moved the pawn to goal! At "
-						+ goal.getPoint().toString());
 				return goal;
 			} else {
 				return null;
@@ -273,7 +213,7 @@ public class Player {
 					.println("Oops, invalid move attempted! Goal runway is too short");
 			return null;
 		} else {
-			return movePawnGoal(pawn, (GoalField) goal.getNextField(),
+			return checkMovePawnGoal(pawn, (GoalField) goal.getNextField(),
 					distance - 1);
 		}
 	}
