@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -27,10 +28,6 @@ import javax.swing.JPanel;
  */
 public class LudoGame extends JPanel {
 
-	// The height and width of the application
-	private final static int APPHEIGHT = 540;
-	private final static int APPWIDTH = 750;
-
 	// The offsets from the walls of the window
 	private final static int BOARDLEFTOFFSET = 5;
 	private final static int BOARDTOPOFFSET = 5;
@@ -41,9 +38,6 @@ public class LudoGame extends JPanel {
 	private final static int GRIDNUM = 11;
 	// This 2D array holds the top left point of each matching grid spot
 	private final static Point[][] THEGRID = new Point[GRIDNUM][GRIDNUM];
-	// The grid offsets for putting pawns in the correct home field
-	private final static int LEFT = 1, RIGHT = 8;
-	private final static int TOP = 1, BOTTOM = 8;
 
 	public static int SLEEP = 200;
 
@@ -81,7 +75,7 @@ public class LudoGame extends JPanel {
 	public Runnable continueAfterThreadEnd = new Runnable() {
 		@Override
 		public void run() {
-			continueGame();
+			continueGameRound();
 		}
 	};
 
@@ -91,7 +85,7 @@ public class LudoGame extends JPanel {
 	 * @param numberOfHumans
 	 *            The number of humans to be playing the game.
 	 */
-	private LudoGame(int numberOfHumans) {
+	private LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
 		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
@@ -156,7 +150,7 @@ public class LudoGame extends JPanel {
 		addPawns(yellowPawnImg, yellowPawns, yellowHome);
 		addPawns(greenPawnImg, greenPawns, greenHome);
 
-		setupThePlayers(numberOfHumans);
+		setupThePlayers();
 
 		// Get an instance of the singleton Die.
 		theDie = Die.getInstance(die);
@@ -172,27 +166,24 @@ public class LudoGame extends JPanel {
 	 * goes here.
 	 */
 	protected void startTheGame() {
-		testGame();
+		startGameRound();
 	}
 
-	private void testGame() {
+	private void startGameRound() {
 		if (theShowMustGoOn) {
 			Player pl = players.get(thePlayer);
 			System.out.println("Player " + thePlayer + " starts turn ...");
 			pl.setLabelIsTurn();
-			// int roll
-			// = 0;
-			// do {
 			int roll = rollDie();
 			sleep(SLEEP);
 			pl.doMove(roll);
 		}
 	}
 
-	protected void continueGame() {
+	protected void continueGameRound() {
 		sleep(SLEEP);
 		if (theDie.lastRoll() == 6) {
-			testGame();
+			startGameRound();
 		} else {
 			Player pl = players.get(thePlayer);
 			System.out.println("Turn done!\n");
@@ -208,7 +199,7 @@ public class LudoGame extends JPanel {
 				if (thePlayer > 3) {
 					thePlayer = 0;
 				}
-				testGame();
+				startGameRound();
 			}
 		}
 	}
@@ -364,12 +355,8 @@ public class LudoGame extends JPanel {
 
 	/**
 	 * Sets up all of the players with strategies and their owned pawns, etc.
-	 * 
-	 * @param numberOfHumans
-	 *            The number of human players we will be seeing. The rest of the
-	 *            players will be randomly assigned a strategy.
 	 */
-	private void setupThePlayers(int numberOfHumans) {
+	private void setupThePlayers() {
 
 		// Set up the GoalFields in order
 		ArrayList<ArrayList<GoalField>> goalFields = new ArrayList<ArrayList<GoalField>>(
@@ -385,39 +372,50 @@ public class LudoGame extends JPanel {
 		// And player labels
 		JLabel[] playerLabels = { redLabel, blueLabel, yellowLabel, greenLabel };
 
-		// Loop through the four players.
+		// Player names
+		String[] names = { "Red", "Blue", "Yellow", "Green" };
+
+		// Possible Strategies
+		String[] strategies = { "Aggressive", "Lone Pawn", "Many Pawns",
+				"Human Player" };
+		// Player Choices of Strategies
+		JComboBox[] choices = { new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies),
+				new JComboBox<String>(strategies) };
+
+		JPanel prompt = new JPanel();
 		for (int i = 0; i < 4; i++) {
-			// Do we need the next player to be a human?
-			if (numberOfHumans > i) {
-				players.add(new Player(new HumanStrategy(), goalFields.get(i),
-						homeFields[i], playerLabels[i], pawns.get(i), this));
-			} else {
-				// Choose an AI strategy.
-
-				// int choice = (int) (1 + Math.random() * 4);
-				// TODO change back to random after strategy implementation
-				int choice = 1; // force the LonePawnStrategy
-
+			prompt.add(new JLabel(names[i]));
+			prompt.add(choices[i]);
+		}
+		int result = JOptionPane.showConfirmDialog(null, prompt,
+				"Please designate the players", JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
+			// Loop through the four players.
+			for (int i = 0; i < 4; i++) {
 				Strategy someStrategy;
-				switch (choice) {
-				case 1:
+				switch (choices[i].getSelectedItem().toString()) {
+				case "Aggressive":
 					someStrategy = new AggressiveStrategy();
 					break;
-				case 2:
-					someStrategy = new DefensiveStrategy();
-					break;
-				case 3:
+				case "Lone Pawn":
 					someStrategy = new LonePawnStrategy();
 					break;
-				case 4:
-				default:
+				case "Many Pawns":
 					someStrategy = new ManyPawnsStrategy();
 					break;
+				case "Human Player":
+				default:
+					someStrategy = new HumanStrategy();
+					break;
 				}
-				// Create the AI.
+				// Create the players.
 				players.add(new Player(someStrategy, goalFields.get(i),
 						homeFields[i], playerLabels[i], pawns.get(i), this));
 			}
+		} else {
+			System.exit(1);
 		}
 		// All the players are initialized now.
 	}
@@ -478,14 +476,7 @@ public class LudoGame extends JPanel {
 		JFrame frame = new JFrame("Ludo Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Prompt for players
-		Integer[] possibilities = { 0, 1, 2, 3, 4 };
-		int numberOfHumans = (int) JOptionPane.showInputDialog(frame,
-				"How many humans will be attempting to out-Ludo the computer?",
-				"Player Asker Abouter", JOptionPane.DEFAULT_OPTION, null,
-				possibilities, possibilities[0]);
-
-		LudoGame contentPane = new LudoGame(numberOfHumans);
+		LudoGame contentPane = new LudoGame();
 		contentPane.setOpaque(true);
 		frame.setContentPane(contentPane);
 
