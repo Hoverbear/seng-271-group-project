@@ -376,8 +376,8 @@ public class LudoGame extends JPanel {
 		String[] names = { "Red", "Blue", "Yellow", "Green" };
 
 		// Possible Strategies
-		String[] strategies = { "Aggressive", "Lone Pawn", "Many Pawns",
-				"Human Player" };
+		String[] strategies = { "Aggressive", "Defensive", "Lone Pawn",
+				"Many Pawns", "Human Player" };
 		// Player Choices of Strategies
 		JComboBox[] choices = { new JComboBox<String>(strategies),
 				new JComboBox<String>(strategies),
@@ -404,6 +404,9 @@ public class LudoGame extends JPanel {
 					break;
 				case "Many Pawns":
 					someStrategy = new ManyPawnsStrategy();
+					break;
+				case "Defensive":
+					someStrategy = new DefensiveStrategy();
 					break;
 				case "Human Player":
 				default:

@@ -40,6 +40,7 @@ public class AggressiveStrategy implements Strategy {
 				if (frontMostValid == null) {
 					frontMostValid = p;
 				}
+				// If we can knock someone out, do it! Rawr!
 				if (f.getPawn() != null) {
 					sendMoveToPlayer(player, new Move(p, f));
 					return;

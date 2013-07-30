@@ -18,15 +18,18 @@ public class ManyPawnsStrategy implements Strategy {
 		theHome = player.getHomeField();
 		thePawns = player.getPawns();
 
+		// If can move a pawn out of the home field, move it.
 		if (dieRoll == 6 && theHome.getPawnCount() > 0
 				&& player.checkMovePawnHome() != null) {
 			sendMoveToPlayer(player,
 					new Move(theHome.getPawn(), theHome.getNextField()));
 			return;
 		} else {
+			// Find all the pawns on the field.
+			// Map them into the "Chosen" list.
 			ArrayList<Pawn> chosen = new ArrayList<Pawn>();
 			Field field = theHome.getNextField();
-
+			// Traverse
 			do {
 				if (field.hasPawn()) {
 					if (thePawns.contains(field.getPawn())) {
@@ -36,22 +39,26 @@ public class ManyPawnsStrategy implements Strategy {
 				field = field.getNextField();
 			} while (field != theHome.getNextField());
 
+			// By now we have a list of pawns on the field.
+
+			// Can do a basic move?
 			for (Pawn p : chosen) {
 				Field f = player.checkMovePawnBasic(p,
 						(BasicField) p.getField(), dieRoll);
 				if (f != null) {
 					sendMoveToPlayer(player, new Move(p, f));
-					return;
+					return; // This is key! Once we find one, stop!
 				}
 			}
 
+			// Can score?
 			for (Pawn p : thePawns) {
 				if (p.isAtGoal()) {
 					Field f = player.checkMovePawnGoal(p,
 							(GoalField) p.getField(), dieRoll);
 					if (f != null) {
 						sendMoveToPlayer(player, new Move(p, f));
-						return;
+						return; // This is key! Once we find one, stop!
 					}
 				}
 			}
