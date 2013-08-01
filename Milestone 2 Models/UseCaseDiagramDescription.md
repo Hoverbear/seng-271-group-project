@@ -37,3 +37,11 @@ A player.
 ### Alternative Flow ###
 [Player's move is invalid]
 An exception occurs instead of step 1, and the game continues.
+
+Use Case: Set Strategies
+---------------------
+### Participating Actor ###
+The starter of the program. (In general, this is the human Player)
+
+### Basic Flow ###
+1. The human chooses the strategy for each of the 4 players participating.
