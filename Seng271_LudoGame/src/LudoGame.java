@@ -42,7 +42,7 @@ public class LudoGame extends JPanel {
 	// This 2D array holds the top left point of each matching grid spot
 	private final static Point[][] THEGRID = new Point[GRIDNUM][GRIDNUM];
 
-	public static int SLEEP = 20;
+	public static int SLEEP = 200;
 
 	private boolean theShowMustGoOn = true;
 	private int thePlayer = 0;
