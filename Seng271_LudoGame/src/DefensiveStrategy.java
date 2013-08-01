@@ -46,7 +46,14 @@ public class DefensiveStrategy implements Strategy {
 				// Use this pawn.
 				if (frontMostValid == null) {
 					frontMostValid = p;
+					if (player.checkMovePawnBasic(frontMostValid,
+							(BasicField) frontMostValid.getField(), dieRoll)
+							.getClass() == GoalField.class) {
+						sendMoveToPlayer(player, new Move(frontMostValid, f));
+						return;
+					}
 				}
+
 				// For every field between the pawn and the target location,
 				Field nextField = p.getField();
 				for (int i = 0; i < dieRoll; i++) {
@@ -77,30 +84,7 @@ public class DefensiveStrategy implements Strategy {
 			}
 		}
 
-		// If an aggressive move wasn't found, can a pawn be brought out?
-		if (dieRoll == 6 && theHome.getPawnCount() > 0
-				&& player.checkMovePawnHome() != null) {
-			System.out.println("Defensive Choice: Pop Pawn Move.");
-			sendMoveToPlayer(player,
-					new Move(theHome.getPawn(), theHome.getNextField()));
-			return;
-		}
-
-		// Finally, take a stupid move since we have to and can.
-		if (rejects.size() != 0) {
-			sendMoveToPlayer(player, rejects.get(0));
-			return;
-		}
-
-		// If no pawns can be brought out, try to move front most valid pawn.
-		if (frontMostValid != null) {
-			Field f = player.checkMovePawnBasic(frontMostValid,
-					(BasicField) frontMostValid.getField(), dieRoll);
-			sendMoveToPlayer(player, new Move(frontMostValid, f));
-			return;
-		}
-
-		// Iterates through the goal pawns if no valid move found yet.
+		// Iterates through the goal pawns if no valid or good move found yet.
 		for (Pawn p : thePawns) {
 			if (p.isAtGoal()) {
 				Field f = player.checkMovePawnGoal(p, (GoalField) p.getField(),
@@ -110,6 +94,12 @@ public class DefensiveStrategy implements Strategy {
 					return;
 				}
 			}
+		}
+
+		// Finally, take a stupid move if one is possible.
+		if (rejects.size() != 0) {
+			sendMoveToPlayer(player, rejects.get(0));
+			return;
 		}
 
 		// If the player has no moves, he passes.

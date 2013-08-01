@@ -1,10 +1,7 @@
-import java.awt.Point;
-
 import javax.swing.JButton;
 
 public class Pawn {
 	private final JButton imgSrc;
-	private Point position;
 	private Field location;
 	private HomeField homeLoc;
 	private int pos = 0;
@@ -26,23 +23,6 @@ public class Pawn {
 	 */
 	protected JButton getImgSrc() {
 		return imgSrc;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private Point getPosition() {
-		return position;
-	}
-
-	/**
-	 * 
-	 * @param pos
-	 */
-	private void setPosition(final Point pos) {
-		this.position = pos;
-		imgSrc.setLocation(pos);
 	}
 
 	public final Field getField() {
@@ -77,7 +57,6 @@ public class Pawn {
 			}
 		}
 		this.location = field;
-		setPosition(location.getPoint());
 		location.setPawn(this);
 		if (field.getClass() == BasicField.class) {
 			this.pos = 1;

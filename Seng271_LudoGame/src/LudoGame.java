@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,9 +29,11 @@ import javax.swing.JPanel;
  */
 public class LudoGame extends JPanel {
 
+	// Generated.
+	private static final long serialVersionUID = 4096501410402784791L;
 	// The offsets from the walls of the window
-	private final static int BOARDLEFTOFFSET = 5;
-	private final static int BOARDTOPOFFSET = 5;
+	private final static int BOARDLEFTOFFSET = 9;
+	private final static int BOARDTOPOFFSET = 7;
 
 	// The grids on the game board are 48 pixels across
 	private final static int GRIDSIZE = 48;
@@ -39,7 +42,7 @@ public class LudoGame extends JPanel {
 	// This 2D array holds the top left point of each matching grid spot
 	private final static Point[][] THEGRID = new Point[GRIDNUM][GRIDNUM];
 
-	public static int SLEEP = 200;
+	public static int SLEEP = 20;
 
 	private boolean theShowMustGoOn = true;
 	private int thePlayer = 0;
@@ -87,12 +90,12 @@ public class LudoGame extends JPanel {
 	 */
 	private LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		final ImageIcon boardBackground = createImageIcon("src/game_board.png");
-		final ImageIcon redPawnImg = createImageIcon("src/red_pawn.png");
-		final ImageIcon bluePawnImg = createImageIcon("src/blue_pawn.png");
-		final ImageIcon yellowPawnImg = createImageIcon("src/yellow_pawn.png");
-		final ImageIcon greenPawnImg = createImageIcon("src/green_pawn.png");
-		final ImageIcon dieImg = createImageIcon("src/die_1.jpg");
+		final ImageIcon boardBackground = createImageIcon("src/board_bkg.png");
+		final ImageIcon redPawnImg = createImageIcon("src/red_disk.png");
+		final ImageIcon bluePawnImg = createImageIcon("src/blue_disk.png");
+		final ImageIcon yellowPawnImg = createImageIcon("src/yellow_disk.png");
+		final ImageIcon greenPawnImg = createImageIcon("src/green_disk.png");
+		final ImageIcon dieImg = createImageIcon("src/die_1.png");
 
 		setupTheGrid();
 
@@ -112,20 +115,24 @@ public class LudoGame extends JPanel {
 
 		JPanel dieLayer = new JPanel();
 		dieLayer.setPreferredSize(new Dimension(200, 200));
-		dieLayer.setBorder(BorderFactory.createTitledBorder("Die Roll"));
+		dieLayer.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder(Color.black), "Die Roll"));
 		dieLayer.setLayout(new GridBagLayout());
 
 		JLabel die = new JLabel(dieImg);
 		dieLayer.add(die, new GridBagConstraints());
+		dieLayer.setBackground(new Color(188, 189, 194));
 
 		JPanel playersLayer = new JPanel();
 		playersLayer.setPreferredSize(new Dimension(200, 200));
-		playersLayer.setBorder(BorderFactory.createTitledBorder("Players"));
+		playersLayer.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder(Color.black), "Players"));
 		redLabel = new JLabel("Red Player");
 		blueLabel = new JLabel("Blue Player");
 		yellowLabel = new JLabel("Yellow Player");
 		greenLabel = new JLabel("Green Player");
 		playersLayer.setLayout(new GridBagLayout());
+		playersLayer.setBackground(new Color(188, 189, 194));
 
 		GridBagConstraints playGrid = new GridBagConstraints();
 		playGrid.gridy = 0;
@@ -142,6 +149,7 @@ public class LudoGame extends JPanel {
 		rightPane.add(dieLayer, theGrid);
 		theGrid.gridy = 1;
 		rightPane.add(playersLayer, theGrid);
+		rightPane.setBackground(new Color(188, 189, 194));
 
 		setupTheFields();
 
@@ -211,7 +219,7 @@ public class LudoGame extends JPanel {
 	private int rollDie() {
 		int playerRoll = theDie.roll();
 		System.out.println("Roll: " + playerRoll);
-		theDie.setImage(createImageIcon("src/die_" + playerRoll + ".jpg"));
+		theDie.setImage(createImageIcon("src/die_" + playerRoll + ".png"));
 		sleep(SLEEP * 2); // This simulates being held in suspense.
 		return playerRoll;
 	}
@@ -379,6 +387,7 @@ public class LudoGame extends JPanel {
 		String[] strategies = { "Aggressive", "Defensive", "Lone Pawn",
 				"Many Pawns", "Human Player" };
 		// Player Choices of Strategies
+		@SuppressWarnings("rawtypes")
 		JComboBox[] choices = { new JComboBox<String>(strategies),
 				new JComboBox<String>(strategies),
 				new JComboBox<String>(strategies),
@@ -481,6 +490,7 @@ public class LudoGame extends JPanel {
 
 		LudoGame contentPane = new LudoGame();
 		contentPane.setOpaque(true);
+		contentPane.setBackground(new Color(188, 189, 194));
 		frame.setContentPane(contentPane);
 
 		frame.pack();

@@ -50,7 +50,12 @@ public class Player {
 	 * Calls on the strategy to perform a move.
 	 */
 	public final void doMove(final int dieRoll) {
-		strategy.chooseMove(this, dieRoll);
+		if (dieRoll == 6 && homeField.getPawnCount() > 0
+				&& checkMovePawnHome() != null) {
+			takeMove(new Move(homeField.getPawn(), homeField.getNextField()));
+		} else {
+			strategy.chooseMove(this, dieRoll);
+		}
 	}
 
 	public void takeMove(final Move move) {
@@ -225,8 +230,8 @@ public class Player {
 	public boolean checkValidMove(final Field field) {
 		if (field.hasPawn()) {
 			if (isOwnPawn(field.getPawn())) {
-				System.err
-						.println("Oops, invalid move attempted! Own pawn at field location");
+				System.out
+						.println("Invalid move considered, own pawn at field location");
 				return false;
 			} else {
 				return true;
@@ -249,19 +254,4 @@ public class Player {
 		}
 		return ownPawn;
 	}
-
-	/**
-	 * 
-	 * @param milli
-	 *            The amount of milliseconds to sleep.
-	 */
-	private void sleep(final long milli) {
-		try {
-			Thread.sleep(milli);
-		} catch (InterruptedException ie) {
-			System.err
-					.println("Unexpected timing error. Aborting thread sleep");
-		}
-	}
-
 }

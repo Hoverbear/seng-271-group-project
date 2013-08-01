@@ -48,15 +48,7 @@ public class AggressiveStrategy implements Strategy {
 			}
 		}
 
-		// If an aggressive move wasn't found, can a pawn be brought out?
-		if (dieRoll == 6 && theHome.getPawnCount() > 0
-				&& player.checkMovePawnHome() != null) {
-			sendMoveToPlayer(player,
-					new Move(theHome.getPawn(), theHome.getNextField()));
-			return;
-		}
-
-		// If no pawns can be brought out, try to move front most valid pawn.
+		// If no aggressive moves found, try to move front most valid pawn.
 		if (frontMostValid != null) {
 			Field f = player.checkMovePawnBasic(frontMostValid,
 					(BasicField) frontMostValid.getField(), dieRoll);
