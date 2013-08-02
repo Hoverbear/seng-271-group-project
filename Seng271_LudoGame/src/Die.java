@@ -1,6 +1,9 @@
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+/**
+ * This die, for rolling a random number from 1 to 6 inclusive.
+ */
 public class Die {
 	/* This is a singleton! */
 	private static Die instance = new Die();
@@ -8,12 +11,13 @@ public class Die {
 	private static JLabel imgSrc;
 
 	/**
-	 * 
+	 * Private constructor.
 	 */
 	private Die() {
 	}
 
 	/**
+	 * Gets the instance of the die.
 	 * 
 	 * @return The singleton of the die.
 	 */
@@ -30,14 +34,6 @@ public class Die {
 	}
 
 	/**
-	 * 
-	 * @return The value of the die.
-	 */
-	public int getValue() {
-		return value;
-	}
-
-	/**
 	 * Rolls the die.
 	 * 
 	 * @return A newly generated die roll.
@@ -47,10 +43,21 @@ public class Die {
 		return value;
 	}
 
+	/**
+	 * Gets the last roll of the die.
+	 * 
+	 * @return the die roll
+	 */
 	public int lastRoll() {
 		return value;
 	}
 
+	/**
+	 * Updates the image of the die.
+	 * 
+	 * @param img
+	 *            the new image
+	 */
 	public void setImage(final ImageIcon img) {
 		imgSrc.setIcon(img);
 	}

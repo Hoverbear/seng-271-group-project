@@ -22,8 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * This is the main runner class for the Ludo Game. It currently prints the
- * board background image, and adds the pawns to the board.
+ * This is the main runner class for the Ludo Game. It builds the GUI and
+ * initializes and controls the gameplay.
  * 
  * @author Daniel Faulkner
  */
@@ -42,11 +42,15 @@ public class LudoGame extends JPanel {
 	// This 2D array holds the top left point of each matching grid spot
 	private final static Point[][] THEGRID = new Point[GRIDNUM][GRIDNUM];
 
+	// Time to pause between turns/die rolls
 	public static int SLEEP = 200;
 
+	// Tracking if the game is finished
 	private boolean theShowMustGoOn = true;
+	// The current player's turn
 	private int thePlayer = 0;
 
+	// Labels for player's turns
 	private final JLabel redLabel;
 	private final JLabel blueLabel;
 	private final JLabel yellowLabel;
@@ -61,20 +65,25 @@ public class LudoGame extends JPanel {
 	// The swing panel for layered objects
 	private final JLayeredPane boardPane;
 
+	// The Die object
 	private final Die theDie;
 
+	// The home fields
 	private HomeField redHome;
 	private HomeField blueHome;
 	private HomeField greenHome;
 	private HomeField yellowHome;
 
+	// The goal fields
 	private final ArrayList<GoalField> redGoal = new ArrayList<GoalField>();
 	private final ArrayList<GoalField> blueGoal = new ArrayList<GoalField>();
 	private final ArrayList<GoalField> yellowGoal = new ArrayList<GoalField>();
 	private final ArrayList<GoalField> greenGoal = new ArrayList<GoalField>();
 
+	// The players
 	private final ArrayList<Player> players = new ArrayList<Player>();
 
+	// Runnable for redrawing (due to Swing's threading)
 	public Runnable continueAfterThreadEnd = new Runnable() {
 		@Override
 		public void run() {
@@ -83,10 +92,7 @@ public class LudoGame extends JPanel {
 	};
 
 	/**
-	 * Constructor for the game board. Adds layered images and game pieces.
-	 * 
-	 * @param numberOfHumans
-	 *            The number of humans to be playing the game.
+	 * Constructor for the game board.
 	 */
 	private LudoGame() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -170,13 +176,16 @@ public class LudoGame extends JPanel {
 	}
 
 	/**
-	 * Start of a test method. Anything that should happen after board setup
-	 * goes here.
+	 * Launches the game.
 	 */
 	protected void startTheGame() {
 		startGameRound();
 	}
 
+	/**
+	 * If the game has not finished, rolls the die and initializes the current
+	 * player's turn.
+	 */
 	private void startGameRound() {
 		if (theShowMustGoOn) {
 			Player pl = players.get(thePlayer);
@@ -188,6 +197,10 @@ public class LudoGame extends JPanel {
 		}
 	}
 
+	/**
+	 * Increments the current player (unless a 6 was rolled); checks if the game
+	 * is over - if not, calls next game round to start.
+	 */
 	protected void continueGameRound() {
 		sleep(SLEEP);
 		if (theDie.lastRoll() == 6) {
@@ -213,8 +226,9 @@ public class LudoGame extends JPanel {
 	}
 
 	/**
+	 * Rolls the die. Updates the image.
 	 * 
-	 * @return The players roll of the die.
+	 * @return The roll of the die.
 	 */
 	private int rollDie() {
 		int playerRoll = theDie.roll();
@@ -225,6 +239,7 @@ public class LudoGame extends JPanel {
 	}
 
 	/**
+	 * Sleeps the current thread for the specified time.
 	 * 
 	 * @param milli
 	 *            The amount of time to wait (In milliseconds)
@@ -321,12 +336,16 @@ public class LudoGame extends JPanel {
 	}
 
 	/**
-	 * Set up the goal fields for each player.
+	 * Set up the goal fields for each player on the screen. Establishes links.
 	 * 
 	 * @param theGoal
+	 *            the array of a player's goals
 	 * @param gridI
+	 *            the horizontal grid positions
 	 * @param gridJ
+	 *            the vertical grid positions
 	 * @param linker
+	 *            the BasicField that hooks in to this GoalField
 	 */
 	private void setupTheGoals(final ArrayList<GoalField> theGoal,
 			final int[] gridI, final int[] gridJ, final BasicField linker) {
@@ -344,11 +363,15 @@ public class LudoGame extends JPanel {
 	}
 
 	/**
+	 * Sets up the home fields for each player on the screen. Establishes links.
 	 * 
 	 * @param gridI
+	 *            the horizontal grid positions
 	 * @param gridJ
+	 *            the vertical grid positions
 	 * @param entry
-	 * @return
+	 *            the entry point BasicField that the HomeField connects to
+	 * @return the setup HomeField
 	 */
 	private HomeField setupTheHome(final int[] gridI, final int[] gridJ,
 			final BasicField entry) {

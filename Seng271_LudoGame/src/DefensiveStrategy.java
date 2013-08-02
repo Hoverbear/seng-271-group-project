@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 
-/** 
- *
+/**
+ * A strategy that attempts to avoid moving pawns into a position vulnerable to
+ * being landed on.
  */
 public class DefensiveStrategy implements Strategy {
 
@@ -11,7 +12,7 @@ public class DefensiveStrategy implements Strategy {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see Strategy#doMove()
+	 * @see Strategy#chooseMove()
 	 */
 	@Override
 	public void chooseMove(final Player player, final int dieRoll) {
@@ -106,6 +107,11 @@ public class DefensiveStrategy implements Strategy {
 		sendMoveToPlayer(player, null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Strategy#sendMoveToPlayer()
+	 */
 	@Override
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);

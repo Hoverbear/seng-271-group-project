@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 
-/** 
- *
+/**
+ * A strategy that favours rushing a single Pawn to the GoalField before moving
+ * any others.
  */
 public class LonePawnStrategy implements Strategy {
 
@@ -11,7 +12,7 @@ public class LonePawnStrategy implements Strategy {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see Strategy#doMove()
+	 * @see Strategy#chooseMove()
 	 */
 	@Override
 	public void chooseMove(final Player player, final int dieRoll) {
@@ -57,6 +58,11 @@ public class LonePawnStrategy implements Strategy {
 		sendMoveToPlayer(player, null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Strategy#sendMoveToPlayer()
+	 */
 	@Override
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);

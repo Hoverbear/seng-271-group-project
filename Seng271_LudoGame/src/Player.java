@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-/* 
- * 
+/**
+ * The Player object. Holds the relevant strategy, pawns, goal and home fields.
+ * Has methods for analyzing the state of the Pawns and the track.
  */
 public class Player {
 	private final Strategy strategy;
@@ -18,6 +19,7 @@ public class Player {
 	private final ArrayList<Pawn> pawns;
 
 	/**
+	 * Constructs the player.
 	 * 
 	 * @param strategy
 	 *            The strategy used by the player.
@@ -32,6 +34,8 @@ public class Player {
 	 * @param pawns
 	 *            The set of the players pawns. These should be created by the
 	 *            Ludo game initialization.
+	 * @param parent
+	 *            The LudoGame controller. Passed in to allow for thread calls.
 	 */
 	public Player(final Strategy strategy,
 			final ArrayList<GoalField> goalField, final HomeField homeField,
@@ -47,7 +51,8 @@ public class Player {
 	}
 
 	/**
-	 * Calls on the strategy to perform a move.
+	 * Calls on the strategy to perform a move, unless a 6 is rolled and a pawn
+	 * can make a valid move out of the HomeField. Then that is done instead.
 	 */
 	public final void doMove(final int dieRoll) {
 		if (dieRoll == 6 && homeField.getPawnCount() > 0
@@ -58,6 +63,12 @@ public class Player {
 		}
 	}
 
+	/**
+	 * Performs a move, placing a player on a new field. Called by the strategy.
+	 * 
+	 * @param move
+	 *            the move to make
+	 */
 	public void takeMove(final Move move) {
 		if (move != null) {
 			Pawn p = move.getPawn();
@@ -84,6 +95,7 @@ public class Player {
 	}
 
 	/**
+	 * Gets the player's HomeField.
 	 * 
 	 * @return The home field.
 	 */
@@ -92,6 +104,7 @@ public class Player {
 	}
 
 	/**
+	 * Gets the player's GoalField entry point.
 	 * 
 	 * @return The goal field.
 	 */
@@ -100,19 +113,20 @@ public class Player {
 		return goalField.get(goalField.size() - 1);
 	}
 
+	/**
+	 * Gets the player's Pawns.
+	 * 
+	 * @return The Pawns.
+	 */
 	public final ArrayList<Pawn> getPawns() {
 		return pawns;
 	}
 
 	/**
-	 * Moves a pawn out of its homefield.
+	 * Checks if a Pawn can be taken from the HomeField.
 	 */
 	public Field checkMovePawnHome() {
 		if (checkValidMove(homeField.getNextField())) {
-			// Pawn p = homeField.getPawn();
-			// p.moveToField(homeField.getNextField());
-			// System.out.println("Moved the pawn to "
-			// + homeField.getNextField().getPoint().toString());
 			return homeField.getNextField();
 		} else {
 			return null;
@@ -120,12 +134,17 @@ public class Player {
 	}
 
 	/**
-	 * Moves a pawn along the normal fields, checking for matching goal fields.
-	 * Once distance left to travel is zero, settles on field to move to.
+	 * Checks if a pawn could be moved along the normal fields, checking for
+	 * matching goal fields. Once distance left to travel is zero, settles on
+	 * field to move to.
 	 * 
 	 * @param pawn
+	 *            the Pawn to check
 	 * @param field
+	 *            the Field to start with
 	 * @param distance
+	 *            the distance to move
+	 * @return the Field to move to, or null if there is no valid move
 	 */
 	public Field checkMovePawnBasic(final Pawn pawn, final BasicField field,
 			final int distance) {
@@ -152,12 +171,15 @@ public class Player {
 	}
 
 	/**
-	 * Moves a pawn along the goal fields.
+	 * Checks if a pawn could be moved along the goal fields.
 	 * 
 	 * @param pawn
+	 *            the Pawn to check
 	 * @param goal
+	 *            the GoalField to start with
 	 * @param distance
-	 * @return
+	 *            the distance to move
+	 * @return the Field to move to, or null if there is no valid move
 	 */
 	public Field checkMovePawnGoal(final Pawn pawn, final GoalField goal,
 			final int distance) {
@@ -176,6 +198,7 @@ public class Player {
 	}
 
 	/**
+	 * Gets if the player's goal is full.
 	 * 
 	 * @return True if the player's goal fields are full.
 	 */
@@ -188,6 +211,7 @@ public class Player {
 	}
 
 	/**
+	 * Gets if the player's goal is occupied.
 	 * 
 	 * @return This returns true if one or more goal field has a pawn.
 	 */
@@ -200,6 +224,7 @@ public class Player {
 	}
 
 	/**
+	 * Gets the number of pawns occupying the player's goal.
 	 * 
 	 * @return The number of pawns occupying the goal.
 	 */
@@ -213,15 +238,22 @@ public class Player {
 		return numPawns;
 	}
 
+	/**
+	 * Updates the GUI to indicate it is not this player's turn.
+	 */
 	public void setLabelNotTurn() {
 		playLabel.setForeground(new Color(0x000000));
 	}
 
+	/**
+	 * Updates the GUI to indicate is is this player's turn.
+	 */
 	public void setLabelIsTurn() {
 		playLabel.setForeground(new Color(0xff2222));
 	}
 
 	/**
+	 * Checks if a particular Field is valid to have this player's pawn on.
 	 * 
 	 * @param field
 	 *            The field that the player wishes to move the pawn to.
@@ -242,6 +274,7 @@ public class Player {
 	}
 
 	/**
+	 * Checks if a particular pawn belongs to this player.
 	 * 
 	 * @param foundPawn
 	 *            The pawn the player wishes to check.

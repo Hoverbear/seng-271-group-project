@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
-/** 
- *
+/**
+ * A strategy that favours landing on Pawns over other moves.
  */
 public class AggressiveStrategy implements Strategy {
 
@@ -11,7 +11,7 @@ public class AggressiveStrategy implements Strategy {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see Strategy#doMove()
+	 * @see Strategy#chooseMove()
 	 */
 	@Override
 	public void chooseMove(final Player player, final int dieRoll) {
@@ -72,6 +72,11 @@ public class AggressiveStrategy implements Strategy {
 		sendMoveToPlayer(player, null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Strategy#sendMoveToPlayer()
+	 */
 	@Override
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);

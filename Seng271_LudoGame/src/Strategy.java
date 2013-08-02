@@ -1,6 +1,7 @@
 public interface Strategy {
 
 	/**
+	 * Chooses a move for the Player to make.
 	 * 
 	 * @param player
 	 *            The Player the strategy belongs to. For determining the Pawns
@@ -12,14 +13,13 @@ public interface Strategy {
 	public void chooseMove(final Player player, final int dieRoll);
 
 	/**
+	 * Send the move to a Player.
 	 * 
 	 * @param player
 	 *            The Player the strategy belongs to. For sending a Player the
 	 *            Move to take.
 	 * @param move
 	 *            The Move for the Player to take.
-	 * @param dieRoll
-	 *            The die roll.
 	 */
 	public void sendMoveToPlayer(final Player player, final Move move);
 }

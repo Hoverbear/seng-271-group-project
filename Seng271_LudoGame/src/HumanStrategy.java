@@ -2,8 +2,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-/** 
- *
+/**
+ * A strategy that is controlled by a human player and allows for human
+ * interaction (clicking on the pawns to attempt movements).
  */
 public class HumanStrategy implements Strategy, MouseListener {
 
@@ -15,7 +16,7 @@ public class HumanStrategy implements Strategy, MouseListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see Strategy#doMove()
+	 * @see Strategy#chooseMove()
 	 */
 	@Override
 	public void chooseMove(final Player player, final int dieRoll) {
@@ -111,6 +112,11 @@ public class HumanStrategy implements Strategy, MouseListener {
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Strategy#sendMoveToPlayer()
+	 */
 	@Override
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);

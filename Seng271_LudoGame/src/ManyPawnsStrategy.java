@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
-/** 
- *
+/**
+ * A strategy that tries to move all the pawns across the board at once.
  */
 public class ManyPawnsStrategy implements Strategy {
 
@@ -11,7 +11,7 @@ public class ManyPawnsStrategy implements Strategy {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see Strategy#doMove()
+	 * @see Strategy#chooseMove()
 	 */
 	@Override
 	public void chooseMove(final Player player, final int dieRoll) {
@@ -60,6 +60,11 @@ public class ManyPawnsStrategy implements Strategy {
 		sendMoveToPlayer(player, null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Strategy#sendMoveToPlayer()
+	 */
 	@Override
 	public void sendMoveToPlayer(final Player player, final Move move) {
 		player.takeMove(move);
