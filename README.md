@@ -4,7 +4,7 @@ Seng 271 Group Project
 A group project for SENG 271 (Spring 2013) at UVic for SENG 271 A01 with Jens Weber. The professor is Jens Weber and the authors of this project are Andrew Hobden (@Hoverbear), Daniel Faulkner (@maxentropic), and Scott Byrne (@mrgoboom).
 
 ## Running the Project ##
-The decision was made to use Eclipse (for reasons unknown to me) for this project. Thusly, please follow the sort instructions to get it to run:
+The decision was made to use Eclipse (Kepler) for this project. Thusly, please follow the sort instructions to get it to run:
 
 1. Clone this Repo or otherwise obtain a copy.
 2. Open a recent version of Eclipse (We used 4.3 aka Kepler, along with JRE 1.7)
